@@ -3,7 +3,7 @@ title: "Biomat Pharmaceuticals ONP 16S PreProcessing Markdown"
 output: html_notebook
 ---
 
-This R markdown notebook describes the pre-processing of partial 16S rRNA gene amplicon sequences generated for the manuscript titled, "Pharmaceutical biotransformation is influenced by photosynthesis and microbial nitrogen cycling in a benthic wetland biomat". Demultiplexed forward and reverse reads can be found on NCBI under BioProject PRJNA818364. Necessary sample names are listed within the file, "Biomat_Pharmaceuticals_ONP_Amplicon_Metadata.csv", which is also used to create the phyloseq object, as well as in Table S3 of the manuscript. 
+This R markdown notebook describes the pre-processing of partial 16S rRNA gene amplicon sequences generated for the manuscript titled, "Pharmaceutical biotransformation is influenced by photosynthesis and microbial nitrogen cycling in a benthic wetland biomat". Demultiplexed forward and reverse reads can be found on NCBI under BioProject PRJNA818364. Necessary sample names and NCBI Accessions are listed within the file, "Biomat_Pharmaceuticals_ONP_Amplicon_Metadata.csv", which is also used to create the phyloseq object, as well as in Table S3 of the manuscript. 
 
 Moved all demultiplexed forward and reverse reads to a single folder in preparation for manuscript analyses.
 ```{r}
