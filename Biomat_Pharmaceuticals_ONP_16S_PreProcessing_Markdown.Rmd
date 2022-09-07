@@ -1,0 +1,501 @@
+---
+title: "Biomat Pharmaceuticals ONP 16S PreProcessing Markdown"
+output: html_notebook
+---
+
+This R markdown notebook describes the pre-processing of partial 16S rRNA gene amplicon sequences generated for the manuscript titled, "Pharmaceutical biotransformation is influenced by photosynthesis and microbial nitrogen cycling in a benthic wetland biomat". Demultiplexed forward and reverse reads can be found on NCBI under BioProject PRJNA818364. Necessary sample names are listed within the file, "Biomat_Pharmaceuticals_ONP_Amplicon_Metadata.csv", which is also used to create the phyloseq object, as well as in Table S3 of the manuscript. 
+
+Moved all demultiplexed forward and reverse reads to a single folder in preparation for manuscript analyses.
+```{r}
+path<-"PATH/Demultiplexed_for_DADA2" #UPDATE PATH HERE AND ELSEWHERE
+list.files(path)
+```
+
+Creating objects with sorted forward/reverse fastq files.
+```{r}
+fnFs <- sort(list.files(path, pattern="_R1.fq", full.names = TRUE))
+saveRDS(fnFs, file<-"PATH/RDS/fnFs.rds")
+
+fnRs <- sort(list.files(path, pattern="_R2.fq", full.names = TRUE))
+saveRDS(fnRs, file<-"PATH/RDS/fnRs.rds")
+```
+
+Loading libraries into R environment and checking versions / compatibility.
+```{r}
+library(dada2); packageVersion("dada2")
+library(phyloseq); packageVersion("phyloseq")
+library(ggplot2); packageVersion("ggplot2")
+library(qiime2R); packageVersion("qiime2R")
+```
+
+Plotting quality scores as a function of base-pair for a subset of samples to assess sequence quality.
+Q = -10log10(P), where P is the probability that a base is incorrect.
+```{r}
+plotQualityProfile(fnFs[70])
+plotQualityProfile(fnFs[10])
+plotQualityProfile(fnFs[20])
+plotQualityProfile(fnFs[50])
+plotQualityProfile(fnRs[2])
+plotQualityProfile(fnRs[10])
+plotQualityProfile(fnRs[20])
+plotQualityProfile(fnRs[50])
+```
+
+Creating subdirectories to place filtered/trimmed sequences into.
+```{r}
+#Creating object containing sample names
+sample.names <- sapply(strsplit(basename(fnFs), "_R"), `[`, 1)
+saveRDS(sample.names, file="PATH/RDS/sample.names.rds")
+
+#Creatinf subdirectory and amending names to denote filtering
+filtFs <- file.path(path, "filtered", paste0(sample.names, "_F_filt.fastq.gz"))
+saveRDS(filtFs, file="PATH/RDS/filtFs.rds")
+
+filtRs <- file.path(path, "filtered", paste0(sample.names, "_R_filt.fastq.gz"))
+saveRDS(filtRs, file="PATH/RDS/filtRs.rds")
+```
+
+Filtering/trimming forward and reverse reads using filterAndTrim() in dada2.
+trimLeft=c(40,20) ==> Remove first 40 bases from forward reads, first 20 bases from reverse reads. 
+Primers used: 515F-M13= CCGTAAAACGACGGCCAGTCCGTGYCAGCMGCCGCGGTAA (40 bases), 926R = CCGYCAATTYMTTTRAGTTT (20 bases)
+maxN=0 ==> no allowable N sequences (default)
+maxEE=c(2,4) ==> EE=sum(10^(-Q/10)) (slightly more leniant, but still strict, on reverse read quality filtering)
+```{r}
+out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, trimLeft=c(40,20), maxN=0, maxEE=c(2,4), truncQ=2, rm.phix=TRUE, compress=TRUE, multithread=TRUE) 
+out
+
+saveRDS(out,file="PATH/RDS/out.rds")
+```
+
+Manually move all filtered files to designated folders based on sequencing runs so that we can evaluate errors for each run individually, then designate unique filtered objects for each run based on the respective paths, forward then reverse
+```{r}
+#Forward reads
+filtFs1 <- sort(list.files("PATH/Demultiplexed_for_DADA2/filtered/2018_May/",pattern="_F_filt.fastq.gz",full.names = TRUE))
+saveRDS(filtFs1, file="PATH/RDS/filtFs1.rds")
+
+filtFs2 <- sort(list.files("PATH/Demultiplexed_for_DADA2/filtered/2018_August/",pattern="_F_filt.fastq.gz",full.names = TRUE))
+saveRDS(filtFs2, file="PATH/RDS/filtFs2.rds")
+
+filtFs3 <- sort(list.files("PATH/Demultiplexed_for_DADA2/filtered/2018_November/",pattern="_F_filt.fastq.gz",full.names = TRUE))
+saveRDS(filtFs3, file="PATH/RDS/filtFs3.rds")
+
+filtFs4 <- sort(list.files("PATH/Demultiplexed_for_DADA2/filtered/2021_February/",pattern="_F_filt.fastq.gz",full.names = TRUE))
+saveRDS(filtFs4, file="PATH/RDS/filtFs4.rds")
+
+filtFs5 <- sort(list.files("PATH/Demultiplexed_for_DADA2/filtered/2021_November/",pattern="_F_filt.fastq.gz",full.names = TRUE))
+saveRDS(filtFs5, file="PATH/RDS/filtFs5.rds")
+
+#Reverse reads
+filtRs1 <- sort(list.files("PATH/Demultiplexed_for_DADA2/filtered/2018_May/",pattern="_R_filt.fastq.gz",full.names = TRUE))
+saveRDS(filtRs1, file="PATH/RDS/filtRs1.rds")
+
+filtRs2 <- sort(list.files("PATH/Demultiplexed_for_DADA2/filtered/2018_August/",pattern="_R_filt.fastq.gz",full.names = TRUE))
+saveRDS(filtRs2, file="PATH/RDS/filtRs2.rds")
+
+filtRs3 <- sort(list.files("PATH/Demultiplexed_for_DADA2/filtered/2018_November/",pattern="_R_filt.fastq.gz",full.names = TRUE))
+saveRDS(filtRs3, file="PATH/RDS/filtRs3.rds")
+
+filtRs4 <- sort(list.files("PATH/Demultiplexed_for_DADA2/filtered/2021_February/",pattern="_R_filt.fastq.gz",full.names = TRUE))
+saveRDS(filtRs4, file="PATH/RDS/filtRs4.rds")
+
+filtRs5 <- sort(list.files("PATH/Demultiplexed_for_DADA2/filtered/2021_November/",pattern="_R_filt.fastq.gz",full.names = TRUE))
+saveRDS(filtRs5, file="PATH/RDS/filtRs5.rds")
+```
+
+Computing and visualizing the errors associated with our amplicons using parameteric error estimations.
+```{r}
+#Estimating forward errors for all sequencing runs
+set.seed(100)
+errF1 <- learnErrors(filtFs1, multithread=TRUE) 
+saveRDS(errF1, file="PATH/RDS/errF1.rds")
+set.seed(100)
+errF2 <- learnErrors(filtFs2, multithread=TRUE) 
+saveRDS(errF2, file="PATH/RDS/errF2.rds")
+set.seed(100)
+errF3 <- learnErrors(filtFs3, multithread=TRUE) 
+saveRDS(errF3, file="PATH/RDS/errF3.rds")
+set.seed(100)
+errF4 <- learnErrors(filtFs4, multithread=TRUE) 
+saveRDS(errF4, file="PATH/RDS/errF4.rds")
+set.seed(100)
+errF5 <- learnErrors(filtFs5, multithread=TRUE) 
+saveRDS(errF5, file="PATH/RDS/errF5.rds")
+
+#Estimating reverse errors for all sequencing runs
+set.seed(100)
+errR1 <- learnErrors(filtRs1, multithread=TRUE) 
+saveRDS(errR1, file="PATH/RDS/errR1.rds")
+set.seed(100)
+errR2 <- learnErrors(filtRs2, multithread=TRUE) 
+saveRDS(errR2, file="PATH/RDS/errR2.rds")
+set.seed(100)
+errR3 <- learnErrors(filtRs3, multithread=TRUE) 
+saveRDS(errR3, file="PATH/RDS/errR3.rds")
+set.seed(100)
+errR4 <- learnErrors(filtRs4, multithread=TRUE) 
+saveRDS(errR4, file="PATH/RDS/errR4.rds")
+set.seed(100)
+errR5 <- learnErrors(filtRs5, multithread=TRUE) 
+saveRDS(errR5, file="PATH/RDS/errR5.rds")
+```
+
+Visualizing the error outputs.
+```{r}
+#Forward error outputs
+p.errF1 <- plotErrors(errF1, nominalQ=TRUE)
+p.errF2 <- plotErrors(errF2, nominalQ=TRUE)
+p.errF3 <- plotErrors(errF3, nominalQ=TRUE)
+p.errF4 <- plotErrors(errF4, nominalQ=TRUE)
+p.errF5 <- plotErrors(errF5, nominalQ=TRUE)
+
+#Reverse error outputs
+p.errR1 <- plotErrors(errR1, nominalQ=TRUE)
+p.errR2 <- plotErrors(errR2, nominalQ=TRUE)
+p.errR3 <- plotErrors(errR3, nominalQ=TRUE)
+p.errR4 <- plotErrors(errR4, nominalQ=TRUE)
+p.errR5 <- plotErrors(errR5, nominalQ=TRUE)
+```
+
+Performing sequence dereplication. 
+```{r}
+#Dereplicating forward sequences
+derepFs1 <- derepFastq(filtFs1, verbose=TRUE) 
+saveRDS(derepFs1, file="PATH/RDS/derepFs1.rds")
+derepFs2 <- derepFastq(filtFs2, verbose=TRUE) 
+saveRDS(derepFs2, file="PATH/RDS/derepFs2.rds")
+derepFs3 <- derepFastq(filtFs3, verbose=TRUE) 
+saveRDS(derepFs3, file="PATH/RDS/derepFs3.rds")
+derepFs4 <- derepFastq(filtFs4, verbose=TRUE) 
+saveRDS(derepFs4, file="PATH/RDS/derepFs4.rds")
+derepFs5 <- derepFastq(filtFs5, verbose=TRUE) 
+saveRDS(derepFs5, file="PATH/RDS/derepFs5.rds")
+
+#Dereplicating reverse sequences
+derepRs1 <- derepFastq(filtRs1, verbose=TRUE) 
+saveRDS(derepRs1, file="PATH/RDS/derepRs1.rds")
+derepRs2 <- derepFastq(filtRs2, verbose=TRUE) 
+saveRDS(derepRs2, file="PATH/RDS/derepRs2.rds")
+derepRs3 <- derepFastq(filtRs3, verbose=TRUE) 
+saveRDS(derepRs3, file="PATH/RDS/derepRs3.rds")
+derepRs4 <- derepFastq(filtRs4, verbose=TRUE) 
+saveRDS(derepRs4, file="PATH/RDS/derepRs4.rds")
+derepRs5 <- derepFastq(filtRs5, verbose=TRUE) 
+saveRDS(derepRs5, file="PATH/RDS/derepRs5.rds")
+```
+
+```{r}
+#Creating object containing sample names for each sequencing run
+sample.names.1 <- sapply(strsplit(basename(filtFs1), "_F_filt.fastq.gz"), `[`, 1)
+sample.names.2 <- sapply(strsplit(basename(filtFs2), "_F_filt.fastq.gz"), `[`, 1)
+sample.names.3 <- sapply(strsplit(basename(filtFs3), "_F_filt.fastq.gz"), `[`, 1)
+sample.names.4 <- sapply(strsplit(basename(filtFs4), "_F_filt.fastq.gz"), `[`, 1)
+sample.names.5 <- sapply(strsplit(basename(filtFs5), "_F_filt.fastq.gz"), `[`, 1)
+
+#Naming the derep-class objects by the sample names
+names(derepFs1) <- sample.names.1
+names(derepFs2) <- sample.names.2
+names(derepFs3) <- sample.names.3
+names(derepFs4) <- sample.names.4
+names(derepFs5) <- sample.names.5
+
+names(derepRs1) <- sample.names.1
+names(derepRs2) <- sample.names.2
+names(derepRs3) <- sample.names.3
+names(derepRs4) <- sample.names.4
+names(derepRs5) <- sample.names.5
+```
+
+Using the core sample inference algorithm on forward and reverse reads according to Callahan et al.
+```{r}
+#Forward reads
+dadaFs1 <- dada(derepFs1, err=errF1, multithread=TRUE) 
+saveRDS(dadaFs1, file="PATH/RDS/dadaFs1.rds")
+
+dadaFs2 <- dada(derepFs2, err=errF2, multithread=TRUE) 
+saveRDS(dadaFs2, file="PATH/RDS/dadaFs2.rds")
+
+dadaFs3 <- dada(derepFs3, err=errF3, multithread=TRUE) 
+saveRDS(dadaFs3, file="PATH/RDS/dadaFs3.rds")
+
+dadaFs4 <- dada(derepFs4, err=errF4, multithread=TRUE) 
+saveRDS(dadaFs4, file="PATH/RDS/dadaFs4.rds")
+
+dadaFs5 <- dada(derepFs5, err=errF5, multithread=TRUE) 
+saveRDS(dadaFs5, file="PATH/RDS/dadaFs5.rds")
+
+#Reverse reads
+dadaRs1 <- dada(derepRs1, err=errR1, multithread=TRUE) 
+saveRDS(dadaRs1, file="PATH/RDS/dadaRs1.rds")
+
+dadaRs2 <- dada(derepRs2, err=errR2, multithread=TRUE) 
+saveRDS(dadaRs2, file="PATH/RDS/dadaRs2.rds")
+
+dadaRs3 <- dada(derepRs3, err=errR3, multithread=TRUE) 
+saveRDS(dadaRs3, file="PATH/RDS/dadaRs3.rds")
+
+dadaRs4 <- dada(derepRs4, err=errR4, multithread=TRUE) 
+saveRDS(dadaRs4, file="PATH/RDS/dadaRs4.rds")
+
+dadaRs5 <- dada(derepRs5, err=errR5, multithread=TRUE) 
+saveRDS(dadaRs5, file="PATH/RDS/dadaRs5.rds")
+```
+
+Inspecting the dada2 class objects.  
+```{r}
+#Forward reads
+dadaFs1[[1]]
+dadaFs2[[1]]
+dadaFs3[[1]]
+dadaFs4[[1]]
+dadaFs5[[1]]
+
+#Reverse reads 
+dadaRs1[[1]]
+dadaRs2[[1]]
+dadaRs3[[1]]
+dadaRs4[[1]]
+dadaRs5[[1]]
+```
+
+Merging forward and reverse reads, then visualizing them in a mergers table.
+```{r}
+mergers1 <- mergePairs(dadaFs1, derepFs1, dadaRs1, derepRs1, verbose=TRUE)
+saveRDS(mergers1, file="PATH/RDS/mergers1.rds")
+
+mergers2 <- mergePairs(dadaFs2, derepFs2, dadaRs2, derepRs2, verbose=TRUE)
+saveRDS(mergers2, file="PATH/RDS/mergers2.rds")
+
+mergers3 <- mergePairs(dadaFs3, derepFs3, dadaRs3, derepRs3, verbose=TRUE)
+saveRDS(mergers3, file="PATH/RDS/mergers3.rds")
+
+mergers4 <- mergePairs(dadaFs4, derepFs4, dadaRs4, derepRs4, verbose=TRUE)
+saveRDS(mergers4, file="PATH/RDS/mergers4.rds")
+
+mergers5 <- mergePairs(dadaFs5, derepFs5, dadaRs5, derepRs5, verbose=TRUE)
+saveRDS(mergers5, file="PATH/RDS/mergers5.rds")
+```
+
+Constructing an amplicon sequence variance (ASV) table from our merged sequences.
+```{r}
+seqtab1 <- makeSequenceTable(mergers1) 
+saveRDS(seqtab1, file="PATH/RDS/seqtab1.rds")
+
+seqtab2 <- makeSequenceTable(mergers2)
+saveRDS(seqtab2, file="PATH/RDS/seqtab2.rds")
+
+seqtab3 <- makeSequenceTable(mergers3)
+saveRDS(seqtab3, file="PATH/RDS/seqtab3.rds")
+
+seqtab4 <- makeSequenceTable(mergers4) 
+saveRDS(seqtab4, file="PATH/RDS/seqtab4.rds")
+
+seqtab5 <- makeSequenceTable(mergers5)
+saveRDS(seqtab5, file="PATH/RDS/seqtab2.rds")
+```
+
+Inspecting the dimensions of sequence tables post-merging.
+```{r}
+dim(seqtab1)
+dim(seqtab2)
+dim(seqtab3)
+dim(seqtab4)
+dim(seqtab5)
+```
+
+Inspecting distribution of sequence lengths post-merging. 
+```{r}
+table(nchar(getSequences(seqtab1)))
+table(nchar(getSequences(seqtab2)))
+table(nchar(getSequences(seqtab3)))
+table(nchar(getSequences(seqtab4)))
+table(nchar(getSequences(seqtab5)))
+```
+
+Merging sequence tables from respective sequence runs. 
+```{r}
+seqtab <- mergeSequenceTables(seqtab1,seqtab2,seqtab3,seqtab4,seqtab5)
+saveRDS(seqtab, file="PATH/RDS/seqtab.rds")
+```
+
+Removing chimeric sequences from the merged sequenced table.
+```{r}
+seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE, verbose=TRUE)
+saveRDS(seqtab.nochim, file="PATH/RDS/seqtab.nochim.rds")
+```
+
+Viewing the dimensions of the sequence table without chimeras. 
+```{r}
+dim(seqtab.nochim)
+```
+
+Quantifying the fraction of our sequences that were chimeric.
+```{r}
+sum(seqtab.nochim)/sum(seqtab)
+```
+
+Creating dataframes to visualize reads lost at each step within the pipeline, for each sequencing run individually and then as a function of sequencing run. 
+```{r}
+#Creating function to identify reads at each step
+getN <- function(x) sum(getUniques(x)) 
+
+#May 2018 sequencing run
+track1 <- cbind(sapply(filtFs1, getN), sapply(derepFs1, getN),sapply(derepRs1, getN),sapply(dadaFs1, getN), sapply(dadaRs1, getN), sapply(mergers1, getN))
+colnames(track1) <- c("Filtered","dereplicatedF","dereplicatedR", "denoisedF", "denoisedR", "merged")
+rownames(track1) <- sample.names.1
+head(track1)
+track1_df <- as.data.frame(track1)
+track1_df$Run = "May2018"
+
+#August 2018 sequencing run
+track2 <- cbind(sapply(filtFs2, getN), sapply(derepFs2, getN),sapply(derepRs2, getN),sapply(dadaFs2, getN), sapply(dadaRs2, getN), sapply(mergers2, getN))
+colnames(track2) <- c("Filtered","dereplicatedF","dereplicatedR", "denoisedF", "denoisedR", "merged")
+rownames(track2) <- sample.names.2
+head(track2)
+track2_df <- as.data.frame(track2)
+track2_df$Run = "August2018"
+
+#November 2018 sequencing run
+track3 <- cbind(sapply(filtFs3, getN), sapply(derepFs3, getN),sapply(derepRs3, getN),sapply(dadaFs3, getN), sapply(dadaRs3, getN), sapply(mergers3, getN))
+colnames(track3) <- c("Filtered","dereplicatedF","dereplicatedR", "denoisedF", "denoisedR", "merged")
+rownames(track3) <- sample.names.3
+head(track3)
+track3_df <- as.data.frame(track3)
+track3_df$Run = "November2018"
+
+#February 2021 sequencing run
+track4 <- cbind(sapply(filtFs4, getN), sapply(derepFs4, getN),sapply(derepRs4, getN),sapply(dadaFs4, getN), sapply(dadaRs4, getN), sapply(mergers4, getN))
+colnames(track4) <- c("Filtered","dereplicatedF","dereplicatedR", "denoisedF", "denoisedR", "merged")
+rownames(track4) <- sample.names.4
+head(track4)
+track4_df <- as.data.frame(track4)
+track4_df$Run = "February2021"
+
+#November 2021 sequencing run
+track5 <- cbind(sapply(filtFs5, getN), sapply(derepFs5, getN),sapply(derepRs5, getN),sapply(dadaFs5, getN), sapply(dadaRs5, getN), sapply(mergers5, getN))
+colnames(track5) <- c("Filtered","dereplicatedF","dereplicatedR", "denoisedF", "denoisedR", "merged")
+rownames(track5) <- sample.names.5
+head(track5)
+track5_df <- as.data.frame(track5)
+track5_df$Run = "November2021"
+
+#Combining all sequencing runs into one dataframe 
+track_df <- rbind(track1_df,track2_df,track3_df,track4_df,track5_df)
+
+#Calculating differences across key steps (not including Filtering)
+track_df$yield = track_df$merged/track_df$Filtered
+track_df$merging_diff = (track_df$denoisedF - track_df$merged)/track_df$denoisedF
+track_df$derep_diff = track_df$Filtered - track_df$dereplicatedF
+track_df$denoise_diff = track_df$dereplicatedF - track_df$denoisedF
+```
+
+Exporting unique sequences to be used for phylogenetic tree construction. 
+```{r}
+a <- colnames(otu_table(seqtab.nochim, taxa_are_rows=FALSE))
+uniquesToFasta(seqtab.nochim, "uniques.fasta",ids = a)
+```
+
+Assigning taxonomy with Silva v138.
+```{r}
+taxa <- assignTaxonomy(seqtab.nochim, 'PATH/tax/silva_nr99_v138.1_train_set.fa.gz', multithread=TRUE,minBoot = 80) 
+saveRDS(taxa, file="PATH/RDS/taxa.rds")
+```
+
+Assigning species level taxonomy with Silva v138.
+```{r}
+genus.species <- addSpecies(taxa, "PATH/tax/silva_species_assignment_v138.fa.gz")
+saveRDS(genus.species, file="PATH/RDS/genus.species.rds")
+```
+
+*Below chunk run in Mac terminal* 
+Importing uniques.fasta into QIIME2, constructing a multiple sequence alignment, masking said alignment, then constructing and rooting a phylogenetic tree using fastree. 
+```{r}
+#Importing unique ASV's into QIIME2
+##qiime tools import --input-path uniques.fasta --type 'FeatureData[Sequence]' --output-path uniques.fasta.qza
+
+#Constructing multiple sequence alignment
+##qiime alignment mafft --i-sequences uniques.fasta.qza --o-alignment aligned.uniques.fasta.qza
+
+#Masking poorly aligned regions
+##qiime alignment mask --i-alignment aligned.uniques.fasta.qza --o-masked-alignment masked.aligned.uniques.fasta.qza
+
+#Constructing unrooted phylogenetic tree with FastTree
+##qiime phylogeny fasttree --i-alignment masked.aligned.uniques.fasta.qza --o-tree unrooted.tree.qza
+
+#Rooting phylogenetic tree 
+##qiime phylogeny midpoint-root --i-tree unrooted.tree.qza --o-rooted-tree rooted.tree.qza
+```
+
+Importing phylogenetic tree (.qza) into R and converting to file type compatible with phyloseq.
+```{r}
+rooted.tree = qza_to_phyloseq(tree='PATH/rooted.tree.qza')
+saveRDS(rooted.tree, file="PATH/RDS/rooted.tree.rds")
+```
+
+Exporting sample names to confirm with metadata spreadsheet.
+```{r}
+sample_names <-c(sample.names.1,sample.names.2,sample.names.3,sample.names.4,sample.names.5)
+write.csv(sample_names,"sample_names.csv")
+```
+
+Importing metadata and creating phyloseq object. 
+```{r}
+meta=read.csv("Biomat_Pharmaceuticals_ONP_Amplicon_Metadata.csv")
+rownames(meta) <- meta[,1]
+
+OTU = otu_table(seqtab.nochim, taxa_are_rows = FALSE)
+tax = tax_table(taxa)
+samples = sample_data(meta)
+TREE = rooted.tree
+
+ps <- phyloseq(OTU,
+               tax_table((tax)), 
+               samples,
+               TREE)
+```
+
+Filtering phyloseq object to remove eukaryotic, mitochondria and chloroplast ASVs, then  exporting the number of reads for all samples. 
+```{r}
+ps.prok = subset_taxa(ps, Kingdom != "Eukaryota")
+ps_prok = subset_taxa(ps.prok, (Family != "Mitochondria")&(Order != "Chloroplast"))
+write.csv(sample_sums(ps_prok_final),"Total_16S_sample_sums.csv")
+```
+
+Removing controls, counting the number of reads per sample, removing samples < 1467 reads (removes four samples...), then confirming that filtering was successful. 
+```{r}
+ps_prok_no_controls = subset_samples(ps_prok, Control == "No")
+sample_sums(ps_prok_no_controls)
+min(sample_sums(ps_prok_no_controls))
+ps_prok_1.5k = prune_samples(sample_sums(ps_prok_no_controls)>=1467, ps_prok_no_controls)
+sample_sums(ps_prok_1.5k)
+```
+
+Distilling to a final phyloseq object, then counting the total reads and range of sequencing depth, followed by exporting the number of reads for each sample. 
+```{r}
+ps_prok_final = subset_samples(ps_prok_1.5k, Final_ps == "yes")
+
+sum(sample_sums(ps_prok_final))
+min(sample_sums(ps_prok_final))
+max(sample_sums(ps_prok_final))
+
+write.csv(sample_sums(ps_prok_final),"Final_16S_sample_sums.csv")
+```
+
+Denoting ASV's unclassifed at genus level as "uncl. [deepest level]"
+```{r}
+#Converting final taxa table to a dataframe
+tax.tab <- data.frame(tax_table(ps_prok_final))
+
+#Making function to replace genus level taxonomy with "uncl. [deepest level]" if unclassified
+ModifyTax <- function(x,ind){
+    #   xth row in the dataframe
+    #   ind taxonomy level to change
+    if(is.na(x[ind])){
+        nonNa <- which(!is.na(x[-ind]))
+        maxNonNa <- max(nonNa)
+        x[ind] <- paste("uncl.",x[maxNonNa])
+    }else{x[ind] <- x[ind]}
+}
+
+#Applying function to taxa table
+tax_table(ps_prok_final)[,6] <- apply(tax.tab,1,ModifyTax,ind=6)
+```
