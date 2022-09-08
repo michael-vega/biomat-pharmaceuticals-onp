@@ -1,12 +1,15 @@
 ---
-title: "Biomat Pharmaceuticals ONP 16S/18S PreProcessing"
-output: html_notebook
+"Biomat Pharmaceuticals ONP 16S/18S PreProcessing"
+R Version: 3.6.2
 ---
 
-This R markdown lists the pre-processing of partial 16S and 18S rRNA gene amplicon sequences generated for the manuscript titled, "Pharmaceutical biotransformation is influenced by photosynthesis and microbial nitrogen cycling in a benthic wetland biomat". 
+This R markdown describes the pre-processing of partial 16S and 18S rRNA gene amplicon sequences generated for the manuscript titled, "Pharmaceutical biotransformation is influenced by photosynthesis and microbial nitrogen cycling in a benthic wetland biomat". 
 
-Demultiplexed forward and reverse reads can be found on NCBI under BioProject PRJNA818364. Necessary sample names and NCBI Accessions are listed within the file, "Biomat_Pharmaceuticals_ONP_Amplicon_Metadata.csv", which is also used to create the phyloseq object, as well as in Table S3 of the manuscript. 
+Demultiplexed forward and reverse reads can be found on NCBI under BioProject PRJNA818364. Necessary sample names and NCBI Accessions are listed within the file, "Biomat_Pharmaceuticals_ONP_Amplicon_Metadata.csv", which can be downloaded at: https://doi.org/10.25740/yj017kq3463. 
 
+Table S3 of the manuscript contains the final sequencing depth of each sample that should result from this preprocessing pipeline. 
+
+### Begin Workflow ###
 Moved all demultiplexed forward and reverse reads to a single folder in preparation for manuscript analyses.
 ```{r}
 path<-"PATH/Demultiplexed_for_DADA2" #UPDATE PATH HERE AND ELSEWHERE
@@ -24,10 +27,10 @@ saveRDS(fnRs, file<-"PATH/RDS/fnRs.rds")
 
 Loading libraries into R environment and checking versions / compatibility.
 ```{r}
-library(dada2); packageVersion("dada2")
-library(phyloseq); packageVersion("phyloseq")
-library(ggplot2); packageVersion("ggplot2")
-library(qiime2R); packageVersion("qiime2R")
+library(dada2); packageVersion("dada2") #used version 1.14.1
+library(phyloseq); packageVersion("phyloseq") #used version 1.30.0
+library(ggplot2); packageVersion("ggplot2") #used version 3.3.5
+library(qiime2R); packageVersion("qiime2R") #used version 0.99.6
 ```
 
 Plotting quality scores as a function of base-pair for a subset of samples to assess sequence quality.
@@ -659,3 +662,4 @@ ModifyTax <- function(x,ind){
 #Replace the genus taxonomy with the deepest classified taxonomy
 tax_table(ps_euk_final)[,6] <- apply(tax.tab,1,ModifyTax,ind=6)
 ```
+### End Workflow ###
