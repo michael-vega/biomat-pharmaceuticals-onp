@@ -5,7 +5,9 @@ R Version: 3.6.2
 
 This R markdown describes the pre-processing of partial 16S and 18S rRNA gene amplicon sequences generated for the manuscript titled, "Pharmaceutical biotransformation is influenced by photosynthesis and microbial nitrogen cycling in a benthic wetland biomat". 
 
-Demultiplexed forward and reverse reads can be found on NCBI under BioProject PRJNA818364. Necessary sample names and NCBI Accessions are listed within the file, "Biomat_Pharmaceuticals_ONP_Amplicon_Metadata.csv", which can be downloaded at: https://doi.org/10.25740/yj017kq3463. 
+Demultiplexed forward and reverse reads can be found on NCBI under BioProject PRJNA818364. 
+
+Necessary sample names and NCBI Accessions are listed within the file, "Biomat_Pharmaceuticals_ONP_Amplicon_Metadata.csv". 
 
 Table S3 of the manuscript contains the final sequencing depth of each sample that should result from this preprocessing pipeline. 
 
