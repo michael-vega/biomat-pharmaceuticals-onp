@@ -457,7 +457,7 @@ Filtering phyloseq object to remove eukaryotic, mitochondria and chloroplast ASV
 ```{r}
 ps.prok = subset_taxa(ps, Kingdom != "Eukaryota")
 ps_prok = subset_taxa(ps.prok, (Family != "Mitochondria")&(Order != "Chloroplast"))
-write.csv(sample_sums(ps_prok_final),"Total_16S_sample_sums.csv")
+write.csv(sample_sums(ps_prok),"Total_16S_sample_sums.csv")
 ```
 
 Removing controls, counting the number of reads per sample, removing samples < 1467 reads (removes four samples...), then confirming that filtering was successful. 
