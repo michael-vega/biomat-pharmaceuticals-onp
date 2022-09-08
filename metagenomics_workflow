@@ -102,9 +102,11 @@ dRep dereplicate -p 6 -comp 50 -con 10 --genomeInfo dRep_checkm_input_final.csv 
 
 gtdbtk classify_wf --genome_dir MAG_Database/ --out_dir classify_wf_output_RS202 --extension fa --cpus 5
 
-### Annotate MAG database with DRAM ###
+### Annotate MAG database with DRAM, then distill ###
 
 DRAM.py annotate -i ${filelist} -o ${filelist}_DRAMOUT --threads 16 --min_contig_size 2499
+
+DRAM.py distill -i ${filelist}_DRAMOUT/annotations.tsv -o ${filelist}_DRAMOUT/genome_summaries
 
 ### Concatenating all MAGs to a single fasta for later steps ###
 
@@ -117,6 +119,7 @@ cat /MAG_Database/*.fa > Concatenated_dRep_MAGs_MediumHighOnly.fa
 python map_reads_fasta_abundance.py -f Concatenated_dRep_MAGs_MediumHighOnly.fa -r reads.txt -n names.txt -t MapReads2Bins.txt -p 30 -m 3 --min_coverage 5 --min_percent_contig_coverage 80 -u F -d F
 
 #Build index
+
 bowtie2-build Concatenated_dRep_MAGs_MediumHighOnly.fa Concatenated_dRep_MAGs_MediumHighOnly.fa
 
 #Then, for each FASTA in "names.txt" with corresponding filtered reads file names listed in "reads.txt", the below three lines are repeated: 
@@ -131,9 +134,11 @@ rm FASTA_to_Concatenated_dRep_MAGs_MediumHighOnly.fa.sam
 
 pullseq -i FASTA_contigs_2500_prokaryote.fa -n Concatenated_dRep_MAGs_MediumHighOnly.fa -e > FASTA_unbinned_scaffolds.fa
 
-### Annotate unbinned scaffolds with DRAM ###
+### Annotate unbinned scaffolds with DRAM, then distill ###
 
 DRAM.py annotate -i FASTA_unbinned_scaffolds.fa -o FASTA_unbinned_scaffolds.fa_DRAMOUT --threads 16 --min_contig_size 2499
+
+DRAM.py distill -i FASTA_unbinned_scaffolds_annotations.tsv -o FASTA_unbinned_scaffolds/genome_summaries
 
 ### End Workflow ###
 ----------------------
