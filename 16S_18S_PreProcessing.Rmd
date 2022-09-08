@@ -1,9 +1,9 @@
 ---
-title: "Biomat Pharmaceuticals ONP 16S PreProcessing Markdown"
+title: "Biomat Pharmaceuticals ONP 16S/18S PreProcessing"
 output: html_notebook
 ---
 
-This R markdown notebook describes the pre-processing of partial 16S rRNA gene amplicon sequences generated for the manuscript titled, "Pharmaceutical biotransformation is influenced by photosynthesis and microbial nitrogen cycling in a benthic wetland biomat". Demultiplexed forward and reverse reads can be found on NCBI under BioProject PRJNA818364. Necessary sample names and NCBI Accessions are listed within the file, "Biomat_Pharmaceuticals_ONP_Amplicon_Metadata.csv", which is also used to create the phyloseq object, as well as in Table S3 of the manuscript. 
+This R markdown lists the pre-processing of partial 16S and 18S rRNA gene amplicon sequences generated for the manuscript titled, "Pharmaceutical biotransformation is influenced by photosynthesis and microbial nitrogen cycling in a benthic wetland biomat". Demultiplexed forward and reverse reads can be found on NCBI under BioProject PRJNA818364. Necessary sample names and NCBI Accessions are listed within the file, "Biomat_Pharmaceuticals_ONP_Amplicon_Metadata.csv", which is also used to create the phyloseq object, as well as in Table S3 of the manuscript. 
 
 Moved all demultiplexed forward and reverse reads to a single folder in preparation for manuscript analyses.
 ```{r}
@@ -31,11 +31,11 @@ library(qiime2R); packageVersion("qiime2R")
 Plotting quality scores as a function of base-pair for a subset of samples to assess sequence quality.
 Q = -10log10(P), where P is the probability that a base is incorrect.
 ```{r}
-plotQualityProfile(fnFs[70])
+plotQualityProfile(fnFs[5])
 plotQualityProfile(fnFs[10])
 plotQualityProfile(fnFs[20])
 plotQualityProfile(fnFs[50])
-plotQualityProfile(fnRs[2])
+plotQualityProfile(fnRs[5])
 plotQualityProfile(fnRs[10])
 plotQualityProfile(fnRs[20])
 plotQualityProfile(fnRs[50])
@@ -47,7 +47,7 @@ Creating subdirectories to place filtered/trimmed sequences into.
 sample.names <- sapply(strsplit(basename(fnFs), "_R"), `[`, 1)
 saveRDS(sample.names, file="PATH/RDS/sample.names.rds")
 
-#Creatinf subdirectory and amending names to denote filtering
+#Creating subdirectory and amending names to denote filtering
 filtFs <- file.path(path, "filtered", paste0(sample.names, "_F_filt.fastq.gz"))
 saveRDS(filtFs, file="PATH/RDS/filtFs.rds")
 
@@ -257,7 +257,7 @@ dadaRs4[[1]]
 dadaRs5[[1]]
 ```
 
-Merging forward and reverse reads, then visualizing them in a mergers table.
+Merging forward and reverse reads.
 ```{r}
 mergers1 <- mergePairs(dadaFs1, derepFs1, dadaRs1, derepRs1, verbose=TRUE)
 saveRDS(mergers1, file="PATH/RDS/mergers1.rds")
@@ -328,7 +328,7 @@ Viewing the dimensions of the sequence table without chimeras.
 dim(seqtab.nochim)
 ```
 
-Quantifying the fraction of our sequences that were chimeric.
+Quantifying the fraction of sequences that were chimeric.
 ```{r}
 sum(seqtab.nochim)/sum(seqtab)
 ```
@@ -425,7 +425,7 @@ Importing uniques.fasta into QIIME2, constructing a multiple sequence alignment,
 ##qiime phylogeny midpoint-root --i-tree unrooted.tree.qza --o-rooted-tree rooted.tree.qza
 ```
 
-Importing phylogenetic tree (.qza) into R and converting to file type compatible with phyloseq.
+Importing rooted phylogenetic tree (.qza) into R and converting to file type compatible with phyloseq.
 ```{r}
 rooted.tree = qza_to_phyloseq(tree='PATH/rooted.tree.qza')
 saveRDS(rooted.tree, file="PATH/RDS/rooted.tree.rds")
@@ -498,4 +498,162 @@ ModifyTax <- function(x,ind){
 
 #Applying function to taxa table
 tax_table(ps_prok_final)[,6] <- apply(tax.tab,1,ModifyTax,ind=6)
+```
+
+*** The below code moves on to process 18S amplicon sequences for investigating Euk communities ***
+
+Return rejects during mergePairs() to obtain 18S sequences.
+```{r}
+Euk.mergers1 <- mergePairs(dadaFs1, derepFs1, dadaRs1, derepRs1, verbose=TRUE, returnRejects=TRUE, justConcatenate = TRUE)
+Euk.mergers2 <- mergePairs(dadaFs2, derepFs2, dadaRs2, derepRs2, verbose=TRUE, returnRejects=TRUE, justConcatenate = TRUE)
+Euk.mergers3 <- mergePairs(dadaFs3, derepFs3, dadaRs3, derepRs3, verbose=TRUE, returnRejects=TRUE, justConcatenate = TRUE)
+Euk.mergers4 <- mergePairs(dadaFs4, derepFs4, dadaRs4, derepRs4, verbose=TRUE, returnRejects=TRUE, justConcatenate = TRUE)
+Euk.mergers5 <- mergePairs(dadaFs5, derepFs5, dadaRs5, derepRs5, verbose=TRUE, returnRejects=TRUE, justConcatenate = TRUE)
+```
+
+Make Euk sequence tables. 
+```{r}
+Euk.seqtab1 <- makeSequenceTable(Euk.mergers1) 
+saveRDS(Euk.seqtab1, file="PATH/RDS/Euk.seqtab1.rds")
+Euk.seqtab2 <- makeSequenceTable(Euk.mergers2)
+saveRDS(Euk.seqtab2, file="PATH/RDS/Euk.seqtab2.rds")
+Euk.seqtab3 <- makeSequenceTable(Euk.mergers3)
+saveRDS(Euk.seqtab3, file="PATH/RDS/Euk.seqtab3.rds")
+Euk.seqtab4 <- makeSequenceTable(Euk.mergers4) 
+saveRDS(Euk.seqtab4, file="PATH/RDS/Euk.seqtab4.rds")
+Euk.seqtab5 <- makeSequenceTable(Euk.mergers5)
+saveRDS(Euk.seqtab5, file="PATH/RDS/Euk.seqtab2.rds")
+
+dim(Euk.seqtab1)
+dim(Euk.seqtab2)
+dim(Euk.seqtab3)
+dim(Euk.seqtab4)
+dim(Euk.seqtab5)
+
+#Inspect distribution of Euk sequence lengths
+table(nchar(getSequences(Euk.seqtab1)))
+table(nchar(getSequences(Euk.seqtab2)))
+table(nchar(getSequences(Euk.seqtab3)))
+table(nchar(getSequences(Euk.seqtab4)))
+table(nchar(getSequences(Euk.seqtab5)))
+```
+
+Merge Euk sequence tables into one. 
+```{r}
+Euk.seqtab <- mergeSequenceTables(Euk.seqtab1,Euk.seqtab2,Euk.seqtab3, Euk.seqtab4,Euk.seqtab5)
+saveRDS(Euk.seqtab, file="PATH/RDS/Euk.seqtab.rds")
+
+#Inspect merged Euk sequence table. 
+dim(Euk.seqtab)
+table(nchar(getSequences(Euk.seqtab)))
+```
+
+Remove chimeras from the merged Euk sequence table. 
+```{r}
+Euk.seqtab.nochim <- removeBimeraDenovo(Euk.seqtab, method="consensus", multithread=TRUE, verbose=TRUE)
+saveRDS(Euk.seqtab.nochim, "PATH/RDS/Euk.seqtab.nochim.rds") 
+```
+
+View the dimensions of the sequence table without chimeras. 
+```{r}
+dim(Euk.seqtab.nochim)
+```
+
+Quantify the fraction of sequences that were chimeric.
+```{r}
+sum(Euk.seqtab.nochim)/sum(Euk.seqtab)
+```
+
+Export unique Euk sequences for sequence alignment and tree creation.
+```{r}
+a <- colnames(otu_table(Euk.seqtab.nochim, taxa_are_rows=FALSE))
+uniquesToFasta(Euk.seqtab.nochim, "Euk.uniques.fasta",ids = a)
+```
+
+Assign Euk taxonomy using the Silva v132 database. 
+```{r}
+Euk.taxa <- assignTaxonomy(Euk.seqtab.nochim, 'PATH/tax/silva_nr_v132_train_set.fa.gz', multithread=TRUE,minBoot = 80) 
+saveRDS(Euk.taxa, "PATH/RDS/Euk.taxa.rds") 
+```
+
+*Below chunk run in Mac terminal* 
+Import Euk.uniques.fasta into QIIME2, construct a multiple sequence alignment, mask said alignment, then construct and root a phylogenetic tree using fastree. 
+```{r}
+#Importing unique ASV's into QIIME2
+##qiime tools import --input-path Euk.uniques.fasta --type 'FeatureData[Sequence]' --output-path Euk.uniques.fasta.qza
+
+#Constructing multiple sequence alignment
+##qiime alignment mafft --i-sequences Euk.uniques.fasta.qza --o-alignment Euk.aligned.uniques.fasta.qza
+
+#Masking poorly aligned regions
+##qiime alignment mask --i-alignment Euk.aligned.uniques.fasta.qza --o-masked-alignment Euk.masked.aligned.uniques.fasta.qza
+
+#Constructing unrooted phylogenetic tree with FastTree
+##qiime phylogeny fasttree --i-alignment Euk.masked.aligned.uniques.fasta.qza --o-tree Euk.unrooted.tree.qza
+
+#Rooting phylogenetic tree 
+##qiime phylogeny midpoint-root --i-tree Euk.unrooted.tree.qza --o-rooted-tree Euk.rooted.tree.qza
+```
+
+Import rooted phylogenetic tree (.qza) into R and convert to file type compatible with phyloseq.
+```{r}
+Euk.rooted.tree = qza_to_phyloseq(tree='PATH/Euk.rooted.tree.qza')
+saveRDS(Euk.rooted.tree, file="PATH/RDS/Euk.rooted.tree.rds")
+```
+
+Create Euk phyloseq object (metadata file already loaded during 16S phyloseq object creation). 
+```{r}
+Euk.OTU = otu_table(Euk.seqtab.nochim, taxa_are_rows = FALSE)
+Euk.tax = tax_table(Euk.taxa)
+samples = sample_data(meta)
+Euk.TREE = Euk.rooted.tree
+
+Euk.ps. <- phyloseq(Euk.OTU,
+               tax_table((Euk.tax)), 
+               samples,
+               Euk.TREE)
+```
+
+Filter Euk phyloseq object to contain only eukaryotic ASVs, then export the number of reads for all samples. 
+```{r}
+Euk.ps = subset_taxa(Euk.ps., Kingdom == "Eukaryota")
+write.csv(sample_sums(Euk.ps), "Total_18S_sample_sums.csv")
+```
+
+Remove controls, count the number of reads per sample, remove samples < 314 reads (removes seven samples...), then confirm that filtering was successful.
+```{r}
+ps_Euk_no_controls = subset_samples(Euk.ps_final, Control == "No")
+sample_sums(ps_Euk_no_controls)
+min(sample_sums(ps_Euk_no_controls))
+ps_Euk_300 = prune_samples(sample_sums(ps_Euk_no_controls)>=314, ps_Euk_no_controls)
+sample_sums(ps_Euk_300)
+```
+
+Distill to a final phyloseq object, count the total reads and range of sequencing depth, export the final number of reads for each sample. 
+```{r}
+ps_euk_final = subset_samples(ps_Euk_300, Final_ps == "yes")
+
+sum(sample_sums(ps_euk_final))
+min(sample_sums(ps_euk_final))
+max(sample_sums(ps_euk_final))
+
+write.csv(sample_sums(ps_euk_final),"Final_18S_sample_sums.csv")
+```
+
+```{r}
+#Denoting Euk ASV's unclassifed to genus level as "uncl. [deepest level]"
+tax.tab <- data.frame(tax_table(ps_euk_final))
+
+ModifyTax <- function(x,ind){
+    #   xth row in the dataframe
+    #   ind taxonomy level to change
+    if(is.na(x[ind])){
+        nonNa <- which(!is.na(x[-ind]))
+        maxNonNa <- max(nonNa)
+        x[ind] <- paste("uncl.",x[maxNonNa])
+    }else{x[ind] <- x[ind]}
+}
+
+#Replace the genus taxonomy with the deepest classified taxonomy
+tax_table(ps_euk_final)[,6] <- apply(tax.tab,1,ModifyTax,ind=6)
 ```
