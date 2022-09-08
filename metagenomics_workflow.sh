@@ -15,29 +15,32 @@
 		#DRAM [v1.2]
 		#Bowtie2 [v2.3.5]
 	
-###Download raw filtered metagenomic reads: NCBI and JGI Gold Accessions are available in Table S5 of the manuscript
+### Download raw filtered metagenomic reads: NCBI and JGI Gold Accessions are available in Table S5 of the manuscript
 
-####Example commands in this workflow use "FASTA.fastq.gz" as file names; FASTA should be replaced throughout by the appropriate filename downloaded from NCBI or JGI
+### Example commands in this workflow use "FASTA.fastq.gz" as file names; FASTA should be replaced throughout by the appropriate filename downloaded from NCBI or JGI
 
-###Unzip fastq.gz files and deinterleave paired end reads
+----------------------
+### Begin Workflow ###
+
+### Unzip fastq.gz files and deinterleave paired end reads ###
 
 gunzip -c FASTA.fastq.gz > FASTA.fastq
 
-###Deinterleave forward and reverse reads from the fastq file 
+### Deinterleave forward and reverse reads from the fastq file ###
 
 deinterleave_fastq.sh < FASTA.fastq FASTA.fastq_R1.fastq FASTA.fastq_R2.fastq
 
-###Trim deinterleaved reads with Sickle, plot quality and trimming info, then assemble with idba-ud using default parameters
+### Trim deinterleaved reads with Sickle, plot quality and trimming info, then assemble with idba-ud using default parameters ###
 
 box_trim_box_assemble.sh FASTA.fastq_R1.fastq FASTA.fastq_R2.fastq 10
 
-###Pull out scaffolds/contigs less than 2500 sequences and calculate stats
+### Pull out scaffolds/contigs less than 2500 sequences and calculate stats ###
 
 pullseq.py -i scaffold.fa -m 2500 -o FASTA_contigs_2500.fa
 
 contig_stats.pl -i FASTA_contigs_2500.fa -o FASTA_contigs_2500_stats
 
-### For the 'bottom' sample only, map all 'bottom' reads to all 'bottom' bins, then perform a subassembly on the unbinned reads ###  
+### For the 'bottom' sample only, map all 'bottom' reads to all 'bottom' bins, then perform a subassembly on unbinned reads ###  
 
 #Concatenating bins from the 'bottom' sample
 
@@ -122,11 +125,14 @@ python sam_file.py -i FASTA_to_Concatenated_dRep_MAGs_MediumHighOnly.fa.sam -v 3
 
 rm FASTA_to_Concatenated_dRep_MAGs_MediumHighOnly.fa.sam
 
-### Parse unbinned contigs/scaffolds from MAG database ###
+### Pull unbinned contigs/scaffolds from MAG database ###
 
 pullseq -i FASTA_contigs_2500_prokaryote.fa -n Concatenated_dRep_MAGs_MediumHighOnly.fa -e > FASTA_unbinned_scaffolds.fa
 
 ### Annotate unbinned scaffolds with DRAM ###
 
 DRAM.py annotate -i FASTA_unbinned_scaffolds.fa -o FASTA_unbinned_scaffolds.fa_DRAMOUT --threads 16 --min_contig_size 2499
+
+### End Workflow ###
+----------------------
 
