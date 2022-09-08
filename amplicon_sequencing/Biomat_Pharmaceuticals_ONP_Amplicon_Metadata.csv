@@ -1,0 +1,143 @@
+SampleID,NCBI SRA Accession,Sequencing_Run,Control,Final_ps,Microcosm_vs_Field,Microcosm_Oxygen,Microcosm_Light_vs_Dark,Microcosm_Inhibitor,Microcosm_Mixing,Microcosm_Time,Field_Type,Core_Depth,Core_Time,Core_Quadrant,Paired_MetaG,Paired_MetaT,Meta_Analysis_Group
+A1_t11,SRR19093969,2021_November,No,yes,Microcosm,Anoxic,Dark,Uninhibited,200 RPM,34 days,,,,,,,"Prado, 2020 Uninhibited Microcosm"
+A10_t11,SRR19093968,2021_November,No,yes,Microcosm,Anoxic,Dark,20 mM Chlorate,200 RPM,34 days,,,,,,,
+A2_t11,SRR19093909,2021_November,No,yes,Microcosm,Anoxic,Dark,Uninhibited,200 RPM,34 days,,,,,,,"Prado, 2020 Uninhibited Microcosm"
+A5_t11,SRR19093898,2021_November,No,yes,Microcosm,Anoxic,Dark,6% Acetylene,200 RPM,34 days,,,,,,,
+A6_t11,SRR19093883,2021_November,No,yes,Microcosm,Anoxic,Dark,6% Acetylene,200 RPM,34 days,,,,,,,
+A7_t11,SRR19093872,2021_November,No,yes,Microcosm,Anoxic,Dark,100 然 ATU,200 RPM,34 days,,,,,,,
+A8_t11,SRR19093861,2021_November,No,yes,Microcosm,Anoxic,Dark,100 然 ATU,200 RPM,34 days,,,,,,,
+A9_t11,SRR19093849,2021_November,No,yes,Microcosm,Anoxic,Dark,20 mM Chlorate,200 RPM,34 days,,,,,,,
+Anoxic_Inoculum_Shield_Normalized_Input,SRR19093936,2021_November,No,yes,Field,,,,,,Grab,,,,,,"Prado, 2020 Microcosm Inoculum"
+Core_Extrusion_Swab_Neg_Oct18_AM3,SRR19093925,2018_November,Swab_Negative,no,,,,,,,,,,,,,
+Core_Extrusion_Swab_Neg_Oct18_PM1,SRR19093967,2018_November,Swab_Negative,no,,,,,,,,,,,,,
+Core_Extrusion_Swab_Neg_Oct18_PM2,SRR19093956,2018_November,Swab_Negative,no,,,,,,,,,,,,,
+CSM_Prado_Jun18_A3_Bubble1_DNA_Amplicon,SRR19093945,2018_August,No,yes,Field,,,,,,Bubble,,,,yes,,"Prado, 2018 Demonstration Scale Bubble"
+CSM_Prado_Jun18_A3_Bubble2_DNA_Amplicon,SRR19093916,2018_August,No,yes,Field,,,,,,Bubble,,,,yes,,"Prado, 2018 Demonstration Scale Bubble"
+CSM_Prado_Jun18_A3_Bubble3_DNA_Amplicon,SRR19093915,2018_August,No,yes,Field,,,,,,Bubble,,,,yes,,"Prado, 2018 Demonstration Scale Bubble"
+CSM_Prado_Jun18_Biowall_Coupon1_DNA_Amplicon,SRR19093914,2018_August,No,yes,Field,,,,,,Biowall,,,,,,"Prado, 2018 Submerged Lignocellulose Biowalls"
+CSM_Prado_Jun18_Biowall_Coupon2_DNA_Amplicon,SRR19093913,2018_August,No,yes,Field,,,,,,Biowall,,,,,,"Prado, 2018 Submerged Lignocellulose Biowalls"
+CSM_Prado_Jun18_Biowall_Coupon3_DNA_Amplicon,SRR19093912,2018_August,No,yes,Field,,,,,,Biowall,,,,,,"Prado, 2018 Submerged Lignocellulose Biowalls"
+CSM_Prado_Oct18_17PM1_0_5z_DNA_Amplicon,SRR19093911,2018_November,No,yes,Field,,,,,,Core,0-5mm,Sunset,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_17PM1_1_0z_DNA_Amplicon,SRR19093910,2018_November,No,yes,Field,,,,,,Core,5-10mm,Sunset,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_17PM1_1_5z_DNA_Amplicon,SRR19093908,2018_November,No,yes,Field,,,,,,Core,10-15mm,Sunset,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_17PM1_2_5z_DNA_Amplicon,SRR19093907,2018_November,No,yes,Field,,,,,,Core,20-25mm,Sunset,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_17PM2_0_5z_DNA_Amplicon,SRR19093906,2018_November,No,yes,Field,,,,,,Core,0-5mm,Sunset,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_17PM2_1_0z_DNA_Amplicon,SRR19093905,2018_November,No,yes,Field,,,,,,Core,5-10mm,Sunset,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_17PM2_1_5z_DNA_Amplicon,SRR19093904,2018_November,No,yes,Field,,,,,,Core,10-15mm,Sunset,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_17PM2_2_5z_DNA_Amplicon,SRR19093903,2018_November,No,yes,Field,,,,,,Core,20-25mm,Sunset,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_AM1_0_5z1_DNA_Amplicon,SRR19093902,2018_November,No,yes,Field,,,,,,Core,0-5mm,Sunrise,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_AM1_0_5z2_DNA_Amplicon,SRR19093901,2021_Feburary,No,yes,Field,,,,,,Core,0-5mm,Sunrise,b,yes,yes,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_AM1_1_0z1_DNA_Amplicon,SRR19093900,2018_November,No,yes,Field,,,,,,Core,5-10mm,Sunrise,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_AM1_1_5z1_DNA_Amplicon,SRR19093899,2018_November,No,yes,Field,,,,,,Core,10-15mm,Sunrise,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_AM1_1_5z2_DNA_Amplicon,SRR19093897,2021_Feburary,No,yes,Field,,,,,,Core,10-15mm,Sunrise,b,yes,yes,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_AM1_2_5z1_DNA_Amplicon,SRR19093896,2018_November,No,yes,Field,,,,,,Core,20-25mm,Sunrise,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_AM1_2_5z2_DNA_Amplicon,SRR19093892,2021_Feburary,No,yes,Field,,,,,,Core,20-25mm,Sunrise,b,yes,yes,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_AM1_Bottom_DNA_Amplicon,SRR19093890,2021_Feburary,No,yes,Field,,,,,,Extruded,80-85mm,Sunrise,,yes,yes,"Prado, 2018 Demonstration Scale Bottom"
+CSM_Prado_Oct18_AM2_0_5z1_DNA_Amplicon,SRR19093889,2018_November,No,yes,Field,,,,,,Core,0-5mm,Sunrise,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_AM2_0_5z2_DNA_Amplicon,SRR19093888,2021_Feburary,No,yes,Field,,,,,,Core,0-5mm,Sunrise,b,yes,yes,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_AM2_1_0z1_DNA_Amplicon,SRR19093887,2018_November,No,yes,Field,,,,,,Core,5-10mm,Sunrise,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_AM2_1_5z1_DNA_Amplicon,SRR19093886,2018_November,No,yes,Field,,,,,,Core,10-15mm,Sunrise,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_AM2_1_5z2_DNA_Amplicon,SRR19093885,2021_Feburary,No,yes,Field,,,,,,Core,10-15mm,Sunrise,b,yes,yes,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_AM2_2_5z1_DNA_Amplicon,SRR19093884,2018_November,No,yes,Field,,,,,,Core,20-25mm,Sunrise,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_AM2_2_5z2_DNA_Amplicon,SRR19093882,2021_Feburary,No,yes,Field,,,,,,Core,20-25mm,Sunrise,b,yes,yes,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_AM2_Bottom_DNA_Amplicon,SRR19093881,2021_Feburary,No,yes,Field,,,,,,Extruded,80-85mm,Sunrise,,yes,yes,"Prado, 2018 Demonstration Scale Bottom"
+CSM_Prado_Oct18_AM3_0_5z1_DNA_Amplicon,SRR19093880,2018_November,No,yes,Field,,,,,,Core,0-5mm,Sunrise,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_AM3_0_5z2_DNA_Amplicon,SRR19093879,2021_Feburary,No,yes,Field,,,,,,Core,0-5mm,Sunrise,b,yes,yes,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_AM3_1_0z1_DNA_Amplicon,SRR19093878,2018_November,No,yes,Field,,,,,,Core,5-10mm,Sunrise,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_AM3_1_5z1_DNA_Amplicon,SRR19093877,2018_November,No,yes,Field,,,,,,Core,10-15mm,Sunrise,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_AM3_1_5z2_DNA_Amplicon,SRR19093876,2021_Feburary,No,yes,Field,,,,,,Core,10-15mm,Sunrise,b,yes,yes,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_AM3_2_5z1_DNA_Amplicon,SRR19093875,2018_November,No,yes,Field,,,,,,Core,20-25mm,Sunrise,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_AM3_2_5z2_DNA_Amplicon,SRR19093874,2021_Feburary,No,yes,Field,,,,,,Core,20-25mm,Sunrise,b,yes,yes,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_AM3_Bottom_DNA_Amplicon,SRR19093873,2021_Feburary,No,yes,Field,,,,,,Extruded,80-85mm,Sunrise,,yes,yes,"Prado, 2018 Demonstration Scale Bottom"
+CSM_Prado_Oct18_PM1_0_5z1_DNA_Amplicon,SRR19093871,2018_November,No,yes,Field,,,,,,Core,0-5mm,Sunset,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_PM1_0_5z2_DNA_Amplicon,SRR19093870,2021_Feburary,No,yes,Field,,,,,,Core,0-5mm,Sunset,b,yes,yes,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_PM1_1_0z1_DNA_Amplicon,SRR19093869,2018_November,No,yes,Field,,,,,,Core,5-10mm,Sunset,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_PM1_1_5z1_DNA_Amplicon,SRR19093868,2018_November,No,yes,Field,,,,,,Core,10-15mm,Sunset,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_PM1_1_5z2_DNA_Amplicon,SRR19093867,2021_Feburary,No,yes,Field,,,,,,Core,10-15mm,Sunset,b,yes,yes,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_PM1_2_5z1_DNA_Amplicon,SRR19093866,2018_November,No,yes,Field,,,,,,Core,20-25mm,Sunset,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_PM1_2_5z2_DNA_Amplicon,SRR19093865,2021_Feburary,No,yes,Field,,,,,,Core,20-25mm,Sunset,b,yes,yes,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_PM1_Bottom_DNA_Amplicon,SRR19093864,2021_Feburary,No,yes,Field,,,,,,Extruded,80-85mm,Sunset,,yes,yes,"Prado, 2018 Demonstration Scale Bottom"
+CSM_Prado_Oct18_PM2_0_5z1_DNA_Amplicon,SRR19093863,2018_November,No,yes,Field,,,,,,Core,0-5mm,Sunset,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_PM2_0_5z2_DNA_Amplicon,SRR19093862,2021_Feburary,No,yes,Field,,,,,,Core,0-5mm,Sunset,b,yes,yes,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_PM2_1_0z1_DNA_Amplicon,SRR19093860,2018_November,No,yes,Field,,,,,,Core,5-10mm,Sunset,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_PM2_1_5z1_DNA_Amplicon,SRR19093859,2018_November,No,yes,Field,,,,,,Core,10-15mm,Sunset,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_PM2_1_5z2_DNA_Amplicon,SRR19093858,2021_Feburary,No,yes,Field,,,,,,Core,10-15mm,Sunset,b,yes,yes,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_PM2_2_5z1_DNA_Amplicon,SRR19093857,2018_November,No,yes,Field,,,,,,Core,20-25mm,Sunset,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_PM2_2_5z2_DNA_Amplicon,SRR19093856,2021_Feburary,No,yes,Field,,,,,,Core,20-25mm,Sunset,b,yes,yes,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_PM2_Bottom_DNA_Amplicon,SRR19093854,2021_Feburary,No,yes,Field,,,,,,Extruded,80-85mm,Sunset,,yes,yes,"Prado, 2018 Demonstration Scale Bottom"
+CSM_Prado_Oct18_PM3_0_5z1_DNA_Amplicon,SRR19093853,2018_November,No,yes,Field,,,,,,Core,0-5mm,Sunset,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_PM3_0_5z2_DNA_Amplicon,SRR19093852,2021_Feburary,No,yes,Field,,,,,,Core,0-5mm,Sunset,b,yes,yes,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_PM3_1_0z1_DNA_Amplicon,SRR19093851,2018_November,No,yes,Field,,,,,,Core,5-10mm,Sunset,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_PM3_1_5z1_DNA_Amplicon,SRR19093850,2018_November,No,yes,Field,,,,,,Core,10-15mm,Sunset,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_PM3_1_5z2_DNA_Amplicon,SRR19093848,2021_Feburary,No,yes,Field,,,,,,Core,10-15mm,Sunset,b,yes,yes,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_PM3_2_5z1_DNA_Amplicon,SRR19093847,2018_November,No,yes,Field,,,,,,Core,20-25mm,Sunset,a,,,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_PM3_2_5z2_DNA_Amplicon,SRR19093846,2021_Feburary,No,yes,Field,,,,,,Core,20-25mm,Sunset,b,yes,yes,"Prado, 2018 Demonstration Scale Cores"
+CSM_Prado_Oct18_PM3_Bottom_DNA_Amplicon,SRR19093855,2021_Feburary,No,yes,Field,,,,,,Core,80-85mm,Sunset,,yes,yes,"Prado, 2018 Demonstration Scale Bottom"
+CSM_Prado_Pilot_2021_Freeze_Dried,SRR19093942,2021_November,No,yes,Field,,,,,,Grab,,,,,,"Prado, 2020-2021 Pilot Scale"
+CSM_Prado_Pilot_2021_Shield,SRR19093941,2021_November,No,yes,Field,,,,,,Grab,,,,,,"Prado, 2020-2021 Pilot Scale"
+Ext_Neg1_August2018,SRR19093940,2018_August,Extraction_Negative,no,,,,,,,,,,,,,
+Ext_Neg1_February2021,SRR19093939,2021_Feburary,Extraction_Negative,no,,,,,,,,,,,,,
+Ext_Neg1_May2018,SRR19093938,2018_May,Extraction_Negative,no,,,,,,,,,,,,,
+Ext_Neg1_November2018,SRR19093937,2018_November,Extraction_Negative,no,,,,,,,,,,,,,
+Ext_Neg1_November2021,SRR19093935,2021_November,Extraction_Negative,no,,,,,,,,,,,,,
+Ext_Neg2_August2018,SRR19093934,2018_August,Extraction_Negative,no,,,,,,,,,,,,,
+Ext_Neg2_February2021,SRR19093933,2021_Feburary,Extraction_Negative,no,,,,,,,,,,,,,
+Ext_Neg2_May2018,SRR19093932,2018_May,Extraction_Negative,no,,,,,,,,,,,,,
+Ext_Neg2_November2021,SRR19093931,2021_November,Extraction_Negative,no,,,,,,,,,,,,,
+Ext_Neg3_February2021,SRR19093930,2021_Feburary,Extraction_Negative,no,,,,,,,,,,,,,
+Ext_Neg3_November2021,SRR19093929,2021_November,Extraction_Negative,no,,,,,,,,,,,,,
+Ext_Neg4_November2021,SRR19093928,2021_November,Extraction_Negative,no,,,,,,,,,,,,,
+Ext_Neg5_November2021,SRR19093927,2021_November,Extraction_Negative,no,,,,,,,,,,,,,
+LD1_t10,SRR19093926,2021_November,No,yes,Microcosm,Oxic,Light,Uninhibited,2X Daily Swirl,19 days,,,,,,,"Prado, 2020 Uninhibited Microcosm"
+LD1_t4,SRR19093924,2021_November,No,yes,Microcosm,Oxic,Light,Uninhibited,2X Daily Swirl,5 days,,,,,,,"Prado, 2020 Uninhibited Microcosm"
+LD2_t10,SRR19093923,2021_November,No,yes,Microcosm,Oxic,Light,Uninhibited,2X Daily Swirl,19 days,,,,,,,"Prado, 2020 Uninhibited Microcosm"
+LD2_t4,SRR19093922,2021_November,No,yes,Microcosm,Oxic,Light,Uninhibited,2X Daily Swirl,5 days,,,,,,,"Prado, 2020 Uninhibited Microcosm"
+LD5_t10,SRR19093921,2021_November,No,yes,Microcosm,Oxic,Dark,Uninhibited,2X Daily Swirl,19 days,,,,,,,"Prado, 2020 Uninhibited Microcosm"
+LD6_t10,SRR19093920,2021_November,No,yes,Microcosm,Oxic,Dark,Uninhibited,2X Daily Swirl,19 days,,,,,,,"Prado, 2020 Uninhibited Microcosm"
+LD7_t10,SRR19093919,2021_November,No,yes,Microcosm,Oxic,Diel Light/Dark,Uninhibited,2X Daily Swirl,19 days,,,,,,,
+LD8_t10,SRR19093895,2021_November,No,yes,Microcosm,Oxic,Diel Light/Dark,Uninhibited,2X Daily Swirl,19 days,,,,,,,
+O1_t10,SRR19093894,2021_November,No,yes,Microcosm,Oxic,Dark,Uninhibited,200 RPM,19 days,,,,,,,"Prado, 2020 Uninhibited Microcosm"
+O13_t10,SRR19093893,2021_November,No,yes,Microcosm,Oxic,Dark,100 然 ATU,200 RPM,19 days,,,,,,,
+O14_t10,SRR19093891,2021_November,No,yes,Microcosm,Oxic,Dark,100 然 ATU,200 RPM,19 days,,,,,,,
+O2_t10,SRR19093966,2021_November,No,yes,Microcosm,Oxic,Dark,Uninhibited,200 RPM,19 days,,,,,,,"Prado, 2020 Uninhibited Microcosm"
+O7_t10,SRR19093965,2021_November,No,yes,Microcosm,Oxic,Dark,6% Acetylene,200 RPM,19 days,,,,,,,
+O8_t10,SRR19093964,2021_November,No,yes,Microcosm,Oxic,Dark,6% Acetylene,200 RPM,19 days,,,,,,,
+Oxic_Inoculum_Freeze_Dried,SRR19093963,2021_November,No,yes,Field,,,,,,Grab,,,,,,"Prado, 2020 Microcosm Inoculum"
+Oxic_Inoculum_Shield_Normalized_Input,SRR19093962,2021_November,No,yes,Field,,,,,,Grab,,,,,,"Prado, 2020 Microcosm Inoculum"
+Oxic_Inoculum_Shield_Raw_Input,SRR19093961,2021_November,No,yes,Field,,,,,,Grab,,,,,,"Prado, 2020 Microcosm Inoculum"
+PCR_Neg1_August2018,SRR19093960,2018_August,PCR_Negative,no,,,,,,,,,,,,,
+PCR_Neg1_February2021,SRR19093959,2021_Feburary,PCR_Negative,no,,,,,,,,,,,,,
+PCR_Neg1_May2018,SRR19093958,2018_May,PCR_Negative,no,,,,,,,,,,,,,
+PCR_Neg1_November2018,SRR19093957,2018_November,PCR_Negative,no,,,,,,,,,,,,,
+PCR_Neg1_November2021,SRR19093955,2021_November,PCR_Negative,no,,,,,,,,,,,,,
+PCR_Neg2_August2018,SRR19093954,2018_August,PCR_Negative,no,,,,,,,,,,,,,
+PCR_Neg2_February2021,SRR19093953,2021_Feburary,PCR_Negative,no,,,,,,,,,,,,,
+PCR_Neg2_May2018,SRR19093952,2018_May,PCR_Negative,no,,,,,,,,,,,,,
+PCR_Neg2_November2018,SRR19093951,2018_November,PCR_Negative,no,,,,,,,,,,,,,
+PCR_Neg3_August2018,SRR19093950,2018_August,PCR_Negative,no,,,,,,,,,,,,,
+PCR_Neg3_February2021,SRR19093949,2021_Feburary,PCR_Negative,no,,,,,,,,,,,,,
+PCR_Neg3_May2018,SRR19093948,2018_May,PCR_Negative,no,,,,,,,,,,,,,
+PCR_Neg3_November2018,SRR19093947,2018_November,PCR_Negative,no,,,,,,,,,,,,,
+PCR_Neg4_August2018,SRR19093946,2018_August,PCR_Negative,no,,,,,,,,,,,,,
+Rehy_Fresh,SRR19093944,2021_Feburary,No,yes,Field,,,,,,Grab,,,,,,"Prado, 2020-2021 Pilot Scale"
+ZJ_Disco_r1t1,SRR19093943,2018_May,No,yes,Field,,,,,,Pipetted Depth Profile,,,,,,"Discovery Bay, 2014 Mature Pilot Scale"
+ZJ_Disco_r2m1,SRR19093918,2018_May,No,yes,Field,,,,,,Pipetted Depth Profile,,,,,,"Discovery Bay, 2014 Mature Pilot Scale"
+ZJ_Disco_r3m2,SRR19093917,2018_May,No,yes,Field,,,,,,Pipetted Depth Profile,,,,,,"Discovery Bay, 2014 Mature Pilot Scale"
+ZJ_Disco_r4b1,SRR13758409,2018_May,No,yes,Field,,,,,,Pipetted Depth Profile,,,,,,"Discovery Bay, 2014 Mature Pilot Scale"
+ZJ_Prado_1,SRR13758408,2018_May,No,yes,Field,,,,,,Grab,,,,,,"Prado, 2013-2014 Nascent Demonstration Scale "
+ZJ_Prado_136,SRR13758397,2018_May,No,yes,Field,,,,,,Grab,,,,,,"Prado, 2014-2016 Mature Demonstration Scale"
+ZJ_Prado_137,SRR13758386,2018_May,No,yes,Field,,,,,,Grab,,,,,,"Prado, 2014-2016 Mature Demonstration Scale"
+ZJ_Prado_139,SRR13758375,2018_May,No,yes,Field,,,,,,Grab,,,,,,"Prado, 2014-2016 Mature Demonstration Scale"
+ZJ_Prado_144,SRR13758370,2018_May,No,yes,Field,,,,,,Grab,,,,,,"Prado, 2014-2016 Mature Demonstration Scale"
+ZJ_Prado_2,SRR13758369,2018_May,No,yes,Field,,,,,,Grab,,,,,,"Prado, 2013-2014 Nascent Demonstration Scale "
+ZJ_Prado_201,SRR13758368,2018_May,No,yes,Field,,,,,,Grab,,,,,,"Prado, 2014-2016 Mature Demonstration Scale"
+ZJ_Prado_202,SRR13758367,2018_May,No,yes,Field,,,,,,Grab,,,,,,"Prado, 2014-2016 Mature Demonstration Scale"
+ZJ_Prado_206,SRR13758366,2018_May,No,yes,Field,,,,,,Grab,,,,,,"Prado, 2014-2016 Mature Demonstration Scale"
+ZJ_Prado_37,SRR13758407,2018_May,No,yes,Field,,,,,,Grab,,,,,,"Prado, 2013-2014 Nascent Demonstration Scale "
+ZJ_Prado_39,SRR13758406,2018_May,No,yes,Field,,,,,,Grab,,,,,,"Prado, 2013-2014 Nascent Demonstration Scale "
+ZJ_Prado_4,SRR13758405,2018_May,No,yes,Field,,,,,,Grab,,,,,,"Prado, 2013-2014 Nascent Demonstration Scale "
+ZJ_Prado_40,SRR13758404,2018_May,No,yes,Field,,,,,,Grab,,,,,,"Prado, 2013-2014 Nascent Demonstration Scale "
+ZJ_Prado_44,SRR13758403,2018_May,No,yes,Field,,,,,,Grab,,,,,,"Prado, 2013-2014 Nascent Demonstration Scale "
+ZJ_Prado_5,SRR13758402,2018_May,No,yes,Field,,,,,,Grab,,,,,,"Prado, 2013-2014 Nascent Demonstration Scale "
+ZJ_Prado_7,SRR13758401,2018_May,No,yes,Field,,,,,,Grab,,,,,,"Prado, 2013-2014 Nascent Demonstration Scale "
+ZJ_Prado_9,SRR13758400,2018_May,No,yes,Field,,,,,,Grab,,,,,,"Prado, 2013-2014 Nascent Demonstration Scale "
