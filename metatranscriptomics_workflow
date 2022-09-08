@@ -31,20 +31,28 @@ sickle pe -f FASTA_R1.fastq -r FASTA_R2.fastq -t sanger -o FASTA_R1_ALL_trimmed.
 
 ### Map filtered and trimmed reads to MAG database with bbmap ###
 
-bbmap.sh build=1  in=FASTA_R1_ALL_trimmed.fastq in2=FASTA_R2_ALL_trimmed.fastq  outm=filtered_99percentidentity_FASTA_vs_metaG_db.sam keepnames=t  ambiguous=toss usejni=t -Xmx200g threads=8 lengthtag=t idtag=t idfilter=0.99 printunmappedcount=t
+#Create index from concatenated MAG fasta
+
+bbmap.sh ref=Concatenated_dRep_MAGs_MediumHighOnly.fa -Xmx100g threads=4 
+
+#Map filtered and trimmed reads to MAG database index (written to disc in above command)
+
+bbmap.sh build=1 in=FASTA_R1_ALL_trimmed.fastq in2=FASTA_R2_ALL_trimmed.fastq  outm=filtered_99percentidentity_FASTA_vs_metaG_db.sam keepnames=t  ambiguous=toss usejni=t -Xmx200g threads=8 lengthtag=t idtag=t idfilter=0.99 printunmappedcount=t
 
 ### Tabulate sequence counts with HTSeq-count ###
 
 #Use samtools to convert SAM file to BAM, then sort
+
 samtools view -@ 8 -bS $filtered_99percentidentity_FASTA_vs_metaG_db.sam > filtered_99percentidentity_FASTA_vs_metaG_db.bam  
 samtools sort -@ 8 -o filtered_99percentidentity_FASTA_vs_metaG_db.sorted.bam filtered_99percentidentity_FASTA_vs_metaG_db.bam
 
 #Count how many mapped metaT reads map to the concatenated MAG gene database (i.e., .gff files from DRAM)
+
 htseq-count -s no -f bam -t CDS -i ID -m union -r name filtered_99percentidentity_FASTA_vs_metaG_db.sorted.bam Concatenated_dRep_MediumHighOnly_MAGs_Genes_2500bp.gff > filtered_99percentidentity_FASTA_vs_metaG_db_ReadCounts.txt
 
 ### Filter counts in R ###
 
-#Import HTSeq count data and sample metadata
+#Import HTSeq count data and sample metadata into R
 
 HTSeq_cts = read.csv("HTSeq_cts.csv")
 HTSeq_coldata = read.csv("HTSeq_coldata.csv")
