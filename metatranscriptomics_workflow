@@ -1,0 +1,72 @@
+### This workflow describes the generic metatranscriptomics pipeline used for the manuscript, "Pharmaceutical biotransformation is influenced by photosynthesis and microbial nitrogen cycling in a benthic wetland biomat"
+
+### Additional details and steps are described in the manuscript and supporting information, as well as on The Wrighton Lab GitHub page: https://github.com/TheWrightonLab/
+
+### The majority of commands were performed using a Slurm job management system and commands are only generically described here 
+
+### Packages Used ###
+		#Sickle [v1.33]
+		#bbmap [v38.70]
+		#HTSeq [v0.12.4]
+		#EdgeR [v3.28.1]
+	
+### Download filtered metatranscriptomic reads: NCBI and JGI Gold Accessions are available in Table S9 of the manuscript
+
+### Examples here use "FASTA.fastq.gz"; FASTA would be replaced throughout by the filename downloaded from NCBI or JGI
+
+-----------------------
+### Begin Workflow ###
+
+### Unzip JGI filtered reads ###
+
+gunzip -c FASTA.fastq.gz > FASTA.fastq
+
+### Deinterleave forward and reverse reads from the fastq file ###
+
+/ORG-Data/scripts/deinterleave_fastq.sh < FASTA_R1.fastq FASTA_R2.fastq
+
+### Trim the filtered reads from JGI ###
+
+sickle pe -f FASTA_R1.fastq -r FASTA_R2.fastq -t sanger -o FASTA_R1_ALL_trimmed.fastq -p FASTA_R2_ALL_trimmed.fastq -s FASTA_R1R2_ALL_trimmed.fastq
+
+### Map filtered and trimmed reads to MAG database with bbmap ###
+
+bbmap.sh build=1  in=FASTA_R1_ALL_trimmed.fastq in2=FASTA_R2_ALL_trimmed.fastq  outm=filtered_99percentidentity_FASTA_vs_metaG_db.sam keepnames=t  ambiguous=toss usejni=t -Xmx200g threads=8 lengthtag=t idtag=t idfilter=0.99 printunmappedcount=t
+
+### Tabulate sequence counts with HTSeq-count ###
+
+#Use samtools to convert SAM file to BAM, then sort
+samtools view -@ 8 -bS $filtered_99percentidentity_FASTA_vs_metaG_db.sam > filtered_99percentidentity_FASTA_vs_metaG_db.bam  
+samtools sort -@ 8 -o filtered_99percentidentity_FASTA_vs_metaG_db.sorted.bam filtered_99percentidentity_FASTA_vs_metaG_db.bam
+
+#Count how many mapped metaT reads map to the concatenated MAG gene database (i.e., .gff files from DRAM)
+htseq-count -s no -f bam -t CDS -i ID -m union -r name filtered_99percentidentity_FASTA_vs_metaG_db.sorted.bam Concatenated_dRep_MediumHighOnly_MAGs_Genes_2500bp.gff > filtered_99percentidentity_FASTA_vs_metaG_db_ReadCounts.txt
+
+### Filter counts in R ###
+
+#Import HTSeq count data and sample metadata
+
+HTSeq_cts = read.csv("HTSeq_cts.csv")
+HTSeq_coldata = read.csv("HTSeq_coldata.csv")
+
+#Convert HTSeq count data to a matrix, then remove scaffolds with less than one raw count in at least three samples 
+
+edgeR_DGEList <- matrix.please(HTSeq_cts)
+keep <- rowSums(cpm(edgeR_DGEList)>1) >= 3
+edgeR_DGEList_filtered <- edgeR_DGEList[keep,]
+
+### Normalize counts as Trimmed Mean of Means (TMM) using EdgeR ###
+
+#Define groups to create DGElist object which connects HTSeq counts with sample metadata
+
+group <- c("AM_0.5","AM_0.5","AM_0.5","AM_1.5","AM_1.5","AM_1.5","AM_2.5","AM_2.5","AM_2.5","AM_Bottom","PM_0.5","PM_0.5","PM_0.5","PM_1.5","PM_1.5","PM_1.5","PM_2.5","PM_2.5","PM_2.5","PM_Bottom")
+DGElist = DGEList(counts=edgeR_DGEList_filtered,group=group,samples=HTSeq_coldata)
+
+#Calculate weighted trimmed mean of M (TMM) values, then normalize raw counts by TMM values
+
+DGElist_TMM <- calcNormFactors(DGElist, method = "TMM")
+DGElist_TMM_cpm <- cpm(DGElist_TMM)
+
+### End Workflow ### 
+-----------------------
+
