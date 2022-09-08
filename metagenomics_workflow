@@ -40,20 +40,6 @@ pullseq.py -i scaffold.fa -m 2500 -o FASTA_contigs_2500.fa
 
 contig_stats.pl -i FASTA_contigs_2500.fa -o FASTA_contigs_2500_stats
 
-### For the 'bottom' sample only, map all 'bottom' reads to all 'bottom' bins, then perform a subassembly on unbinned reads ###  
-
-#Concatenating bins from the 'bottom' sample
-
-cat /Bottom_bins/*.fa > Bottom_concatenated_bins.fa
-
-#Mapping 'bottom' sample reads to bins from the 'bottom' sample 
-
-bbmap.sh -Xmx48G threads=6 minid=100 overwrite=t ref=Bottom_concatenated_bins.fa in1=Bottom_R1_All_trimmed.fastq in2=Bottom_R2_All_trimmed.fastq outu1=Bottom_NotMappedToBins_R1_ToAssembly.fastq outu2=Bottom_NotMappedToBins_R2_ToAssembly.fastq
-
-#Same script as above to trim deinterleaved reads with Sickle, plot quality and trimming info, then assemble ('subassemble') with idba-ud using default parameters
-
-box_trim_box_assemble.sh Bottom_NotMappedToBins_R1_ToAssembly.fastq Bottom_NotMappedToBins_R2_ToAssembly.fastq 10
-
 ### EukRep to parse prokaryotic scaffolds ###
 
 #Note: performed on all assemblies from all samples, including the 'bottom' subassembly 
@@ -87,6 +73,22 @@ runMetaBat.sh -t 6 --verysensitive FASTA_contigs_2500_prokaryote.fa FASTA_contig
 Executes: 'jgi_summarize_bam_contig_depths --outputDepth FASTA_contigs_2500_prokaryote.fa.depth.txt --pairedContigs FASTA_contigs_2500_prokaryote.fa.paired.txt --minContigLength 1000 --minContigDepth 1 FASTA_contigs_2500_prokaryote.sorted.bam' 
 
 Executes: 'metabat2  -t 6 --verysensitive --inFile FASTA_contigs_2500_prokaryote.fa --outFile FASTA_contigs_2500_prokaryote.fa.metabat-bins--verysensitive/bin --abdFile FASTA_contigs_2500_prokaryote.fa.depth.txt' 
+
+### For the 'bottom' sample only, map all 'bottom' reads to all 'bottom' bins, then perform a subassembly on unbinned reads ###  
+
+#Concatenating bins from the 'bottom' sample
+
+cat /Bottom_bins/*.fa > Bottom_concatenated_bins.fa
+
+#Mapping 'bottom' sample reads to bins from the 'bottom' sample 
+
+bbmap.sh -Xmx48G threads=6 minid=100 overwrite=t ref=Bottom_concatenated_bins.fa in1=Bottom_R1_All_trimmed.fastq in2=Bottom_R2_All_trimmed.fastq outu1=Bottom_NotMappedToBins_R1_ToAssembly.fastq outu2=Bottom_NotMappedToBins_R2_ToAssembly.fastq
+
+#Same script as above to trim deinterleaved reads with Sickle, plot quality and trimming info, then assemble ('subassemble') with idba-ud using default parameters
+
+box_trim_box_assemble.sh Bottom_NotMappedToBins_R1_ToAssembly.fastq Bottom_NotMappedToBins_R2_ToAssembly.fastq 10
+
+#Note: binning and EukRep parsing then performed identically on subassembled scaffolds
 
 ### checkM ### 
 
