@@ -48,7 +48,7 @@ EukRep -i FASTA_contigs_2500.fa -o FASTA_contigs_2500_eukrep.fa --min 2500 --pro
 
 ### Binning ### 
 
-#Note: binning was performed with prokaryote contigs from EukRep (e.g., FASTA_contigs_2500_prokaryote.fa) but also unparsed contigs (e.g., FASTA_contigs_2500_eukrep.fa)
+#Note: binning was performed with prokaryote contigs from EukRep (e.g., FASTA_contigs_2500_prokaryote.fa) but also unparsed contigs (e.g., FASTA_contigs_2500.fa)
 
 #Build index file
 
