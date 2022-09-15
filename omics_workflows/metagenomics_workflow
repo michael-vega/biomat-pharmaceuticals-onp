@@ -2,143 +2,140 @@
 
 ### Additional details and steps are described in the manuscript and supporting information, as well as on The Wrighton Lab GitHub page: https://github.com/TheWrightonLab/
 
-### The majority of commands were performed using a Slurm job management system and commands are only generically described here 
+### Download filtered metatranscriptomic reads: NCBI and JGI Gold Accessions are available in Table S5 of the manuscript
+
+### The majority of commands were performed using a Slurm job management system
+
+### All commands use default parameters if not specified
 
 ### Packages Used ###
-		#Sickle [v1.33]
-		#idba_ud [v1.1.0]
-		#EukRep [v0.6.5]
-		#metaBAT2 [v2.12.1]
-		#checkM [v1.1.2]
-		#GTDB-tk [v1.5.0]
-		#dRep [v2.6.2]
-		#DRAM [v1.2]
-		#Bowtie2 [v2.3.5]
-	
-### Download raw filtered metagenomic reads: NCBI and JGI Gold Accessions are available in Table S5 of the manuscript
-
-### Example commands in this workflow use "FASTA.fastq.gz" as file names; FASTA should be replaced throughout by the appropriate filename downloaded from NCBI or JGI
+		#Sickle [v1.33]: https://github.com/najoshi/sickle
+		#idba_ud [v1.1.0]: https://github.com/loneknightpy/idba
+		#EukRep [v0.6.5]: https://github.com/patrickwest/EukRep
+		#metaBAT2 [v2.12.1]: https://bitbucket.org/berkeleylab/metabat/src/master/
+		#checkM [v1.1.2]: https://github.com/Ecogenomics/CheckM
+		#GTDB-tk [v1.5.0]: https://github.com/Ecogenomics/GTDBTk
+		#dRep [v2.6.2]: https://github.com/MrOlm/drep
+		#DRAM [v1.2]: https://github.com/WrightonLabCSU/DRAM
+		#Bowtie2 [v2.3.5]: https://github.com/BenLangmead/bowtie2
 
 ----------------------
 ### Begin Workflow ###
 
-### Unzip fastq.gz files and deinterleave paired end reads ###
+1. Unzip JGI filtered reads using gunzip
+	Inputs: zipped filtered reads files
+	Outputs: unzipped filtered reads files
 
-gunzip -c FASTA.fastq.gz > FASTA.fastq
+2. Deinterleave forward and reverse reads from the unzipped fastq file from Step 1 using deinterleave_fastq.sh
+	Inputs: filtered reads file from Step 1
+	Outputs: deinterleaved forward and reverse reads 
 
-### Deinterleave forward and reverse reads from the fastq file ###
+3. Trim the filtered reads from JGI using sickle
+	Inputs: forward and reverse reads from Step 2
+	Outputs: trimmed forward and reverse reads
+	Parameters: pe, -t = Sanger
 
-deinterleave_fastq.sh < FASTA.fastq FASTA.fastq_R1.fastq FASTA.fastq_R2.fastq
+4. Assemble filtered and trimmed reads using idba-ud
+	Inputs: filtered and trimmed forward and reverse reads from Step 3
+	Outputs: assembled contigs/scaffolds
 
-### Trim deinterleaved reads with Sickle, plot quality and trimming info, then assemble with idba-ud using default parameters ###
+5. Pull out contigs/scaffolds less than 2500 sequences using pullseq
+	Inputs: assembled contigs/scaffolds from Step 4
+	Outputs: assembled contigs/scaffolds < 2500 bp
+	Parameters: -m = 2500
 
-box_trim_box_assemble.sh FASTA.fastq_R1.fastq FASTA.fastq_R2.fastq 10
+6. Parse prokaryotic scaffolds using EukRep
+	Inputs: assembled contigs/scaffolds < 2500 bp from Step 5
+	Outputs: eukaryotic vs prokaryotic assembled contigs/scaffolds < 2500 bp
+	Parameters: --min == 2500
+	#Note: performed on all assemblies from all samples, including the 'bottom' subassembly 
 
-### Pull out scaffolds/contigs less than 2500 sequences and calculate stats ###
+7. Build index file for binning using bowtie2-build 
+	Inputs: assembled contigs/scaffolds < 2500 bp from Step 5 OR prokaryotic assembled contigs/scaffolds < 2500 bp from Step 6
+	Outputs: reference index
+	#Note: performed on all assemblies from all samples, including the 'bottom' subassembly and both prokaryotic EukRep parsed contigs/scaffolds but also raw assembled contigs/scaffolds
 
-pullseq.py -i scaffold.fa -m 2500 -o FASTA_contigs_2500.fa
+8. Align index file against trimmed reads to create sam files using bowtie2
+	Inputs: assembled contigs/scaffolds < 2500 bp from Step 5 OR prokaryotic assembled contigs/scaffolds < 2500 bp from Step 6, reference index from Step 7
+	Outputs: sam files, mapped and unmapped paired contigs/scaffolds
+	Parameters: --fast
 
-contig_stats.pl -i FASTA_contigs_2500.fa -o FASTA_contigs_2500_stats
+9. Convert sam to bam files using 'samtools view' 
+	Inputs: sam files from Step 8
+	Outputs: bam files
 
-### EukRep to parse prokaryotic scaffolds ###
+10. Sort bam files using 'samtools sort'
+	Inputs: bam files from Step 9
+	Outputs: sorted bam files
 
-#Note: performed on all assemblies from all samples, including the 'bottom' subassembly 
+11. Estimate contig/scaffold coverage depth using jgi_summarize_bam_contig_depths
+	Inputs: sorted bam files from Step 10
+	Outputs: text file of coverage depth and 
+	Parameters: --minContigDepth = 1, --minContigLength = 1000
 
-EukRep -i FASTA_contigs_2500.fa -o FASTA_contigs_2500_eukrep.fa --min 2500 --prokarya FASTA_contigs_2500_prokaryote.fa  
+12. Bin contigs/scaffolds into MAGs using metabat2
+	Inputs: assembled contigs/scaffolds < 2500 bp from Step 5 OR prokaryotic assembled contigs/scaffolds < 2500 bp from Step 6, text file of coverage depth from Step 11
+	Outputs: bins, binning statistics
+	Parameters:--verysensitive
 
-### Binning ### 
+13. Perform (sub)assembly on 'bottom' sample reads that did not map to 'bottom' bins 
+	13A. Map 'bottom' sample reads to 'bottom' sample bins using bbmap 
+		Inputs: Concatenated bins from 'bottom' sample, forward and reverse trimmed and filtered reads from 'bottom' sample from Step 3
+		Outputs: forward and reverse trimmed and filtered reads which did not map to 'bottom' sample bins
+		Parameters: minid = 100
+	
+	13B. Assemble reads which did not map to 'bottom' sample bins using idba-ud
+		Inputs: filtered and trimmed forward and reverse reads which did not map to 'bottom' sample bins from Step 13A
+		Outputs: (sub)assembled contigs/scaffolds 
+	#Note: Steps 5 - 12 then perform on 'bottom' sample subassembly 
 
-#Note: binning was performed with prokaryote contigs from EukRep (e.g., FASTA_contigs_2500_prokaryote.fa) but also unparsed contigs (e.g., FASTA_contigs_2500.fa)
+14. Evaluate bin quality and estimate genome statistics using checkM
+	Inputs: path to all bins
+	Outputs: genome statistics and quality metrics for all bins
 
-#Build index file
+15. Depreplicate bins using dRep
+	Inputs: path to all bins, genome statistics .csv file containing completeness, contamination, and strain heterogeneity 
+	Outputs: dereplicated bins and selection statistics/criteria
+	Parameters: -comp = 50, -con = 10,  -sa S_ANI = 0.99
 
-bowtie2-build FASTA_contigs_2500_prokaryote.fa FASTA_contigs_2500_prokaryote_index 
+16. Assign bin taxonomy using GTDB-tk 
+	Inputs: dereplicated MAG database from Step 15
+	Outputs: GTDB-tk taxonomy of MAG database 
 
-#Align index file against trimmed reads to create sequence alignment map (SAM) file
+17. Annotate MAG database using DRAM
+	Inputs: dereplicated MAG database from Step 15
+	Outputs: MAG contig/scaffold annotations
+	Parameters: --min_contig_size = 2499 (includes 2500 bp contigs/scaffolds)
+	
+18. Distill MAG annotations using DRAM 
+	Inputs: MAG contig/scaffold annotations from Step 17
+	Outputs: distillate and liquor annotation files 
 
-bowtie2 --fast -p 6 -x FASTA_contigs_2500_prokaryote_index  -S All_mappedtoall_paired.sam -1 R1_All_trimmed.fastq -2 R2_All_trimmed.fastq --un unmapped_paired.fq --al mapped_paired.fq > bowtie_log  
+19. Concatenate MAG fastas to a single fasta for downstream processing using 'cat' 
+	Inputs: dereplicated MAG database from Step 15
+	Outputs: concatenated fasta of all MAG contigs/scaffolds
 
-#Convert SAM to BAM with samtools
+20. Build index file from concatenated MAG database using bowtie2-build
+	Inputs: concatenated fasta of all MAG contigs/scaffolds from Step 19
+	Outputs: reference index
 
-samtools view -@ 6 -bS All_mappedtoall_paired.sam > FASTA_contigs_2500_prokaryote.bam 
+21. Map reads to MAG database using bowtie2 via map_reads_fasta_abundance.py
+	Inputs: concatenated fasta of all MAG contigs/scaffolds from Step 19, filtered and trimmed forward and reverse reads from Step 3, reference index from Step 20
+	Outputs: text file of mapped read counts for all contigs/scaffolds, read mapping statistics
+	Parameters: -m = 3, --min_coverage = 5, --min_percent_contig_coverage = 80, -u = F, -d = F, D = 10, -R = 2, -N = 1, -L = 22, -i = S,0,2.50 
 
-#Sort BAM file with samtools
+22. Pull assembled contigs/scaffolds not present in MAG database (i.e, 'unbinned') using pullseq
+	Inputs: concatenated fasta of all MAG contigs/scaffolds from Step 19, assembled contigs/scaffolds < 2500 bp from Step 5
+	Outputs: fasta of unbinned contigs/scaffolds < 2500 bp
 
-samtools sort -@ 6 -T FASTA_contigs_2500_prokaryote.bam.sorted -o FASTA_contigs_2500_prokaryote.sorted.bam FASTA_contigs_2500_prokaryote.bam 
-
-#Use sorted BAM file to estimate coverage and depth, then create bins with metaBAT2
-
-runMetaBat.sh -t 6 --verysensitive FASTA_contigs_2500_prokaryote.fa FASTA_contigs_2500_prokaryote.sorted.bam
-
-Executes: 'jgi_summarize_bam_contig_depths --outputDepth FASTA_contigs_2500_prokaryote.fa.depth.txt --pairedContigs FASTA_contigs_2500_prokaryote.fa.paired.txt --minContigLength 1000 --minContigDepth 1 FASTA_contigs_2500_prokaryote.sorted.bam' 
-
-Executes: 'metabat2  -t 6 --verysensitive --inFile FASTA_contigs_2500_prokaryote.fa --outFile FASTA_contigs_2500_prokaryote.fa.metabat-bins--verysensitive/bin --abdFile FASTA_contigs_2500_prokaryote.fa.depth.txt' 
-
-### For the 'bottom' sample only, map all 'bottom' reads to all 'bottom' bins, then perform a subassembly on unbinned reads ###  
-
-#Concatenating bins from the 'bottom' sample
-
-cat /Bottom_bins/*.fa > Bottom_concatenated_bins.fa
-
-#Mapping 'bottom' sample reads to bins from the 'bottom' sample 
-
-bbmap.sh -Xmx48G threads=6 minid=100 overwrite=t ref=Bottom_concatenated_bins.fa in1=Bottom_R1_All_trimmed.fastq in2=Bottom_R2_All_trimmed.fastq outu1=Bottom_NotMappedToBins_R1_ToAssembly.fastq outu2=Bottom_NotMappedToBins_R2_ToAssembly.fastq
-
-#Same script as above to trim deinterleaved reads with Sickle, plot quality and trimming info, then assemble ('subassemble') with idba-ud using default parameters
-
-box_trim_box_assemble.sh Bottom_NotMappedToBins_R1_ToAssembly.fastq Bottom_NotMappedToBins_R2_ToAssembly.fastq 10
-
-#Note: binning and EukRep parsing then performed identically on subassembled scaffolds
-
-### checkM ### 
-
-checkm lineage_wf -t 6 -x fa FASTA_contigs_2500_prokaryote.fa.metabat-bins--verysensitive /checkm
-
-### Bin Dereplication ###
-
-dRep dereplicate -p 6 -comp 50 -con 10 --genomeInfo dRep_checkm_input_final.csv dRep_out_final -g MAG_Database/*.fa
-
-### Taxonomy Assignment ###
-
-gtdbtk classify_wf --genome_dir MAG_Database/ --out_dir classify_wf_output_RS202 --extension fa --cpus 5
-
-### Annotate MAG database with DRAM, then distill ###
-
-DRAM.py annotate -i ${filelist} -o ${filelist}_DRAMOUT --threads 16 --min_contig_size 2499
-
-DRAM.py distill -i ${filelist}_DRAMOUT/annotations.tsv -o ${filelist}_DRAMOUT/genome_summaries
-
-### Concatenating all MAGs to a single fasta for later steps ###
-
-cat /MAG_Database/*.fa > Concatenated_dRep_MAGs_MediumHighOnly.fa
-
-### Read mapping with BowTie2 ###
-
-#Base script below with subsequent lines run internally as part of map_reads_fasta_abundance.py
-
-python map_reads_fasta_abundance.py -f Concatenated_dRep_MAGs_MediumHighOnly.fa -r reads.txt -n names.txt -t MapReads2Bins.txt -p 30 -m 3 --min_coverage 5 --min_percent_contig_coverage 80 -u F -d F
-
-#Build index
-
-bowtie2-build Concatenated_dRep_MAGs_MediumHighOnly.fa Concatenated_dRep_MAGs_MediumHighOnly.fa
-
-#Then, for each FASTA in "names.txt" with corresponding filtered reads file names listed in "reads.txt", the below three lines are repeated: 
-
-bowtie2 -D 10 -R 2 -N 1 -L 22 -i S,0,2.50 -p 30 -x Concatenated_dRep_MAGs_MediumHighOnly.fa -S FASTA_to_Concatenated_dRep_MAGs_MediumHighOnly.fa.sam -1 FASTA/JGI_nonfiltered_reads/R1_ALL_trimmed.fastq -2 FASTA/JGI_nonfiltered_reads/R2_ALL_trimmed.fastq
-
-python sam_file.py -i FASTA_to_Concatenated_dRep_MAGs_MediumHighOnly.fa.sam -v 3 -o mismatches_3_FASTA_to_Concatenated_dRep_MAGs_MediumHighOnly.fa.sam
-
-rm FASTA_to_Concatenated_dRep_MAGs_MediumHighOnly.fa.sam
-
-### Pull unbinned contigs/scaffolds from MAG database ###
-
-pullseq -i FASTA_contigs_2500_prokaryote.fa -n Concatenated_dRep_MAGs_MediumHighOnly.fa -e > FASTA_unbinned_scaffolds.fa
-
-### Annotate unbinned scaffolds with DRAM, then distill ###
-
-DRAM.py annotate -i FASTA_unbinned_scaffolds.fa -o FASTA_unbinned_scaffolds.fa_DRAMOUT --threads 16 --min_contig_size 2499
-
-DRAM.py distill -i FASTA_unbinned_scaffolds_annotations.tsv -o FASTA_unbinned_scaffolds/genome_summaries
+23. Annotate unbinned contigs/scaffolds using DRAM
+	Inputs: fasta of unbinned contigs/scaffolds < 2500 bp from Step 22
+	Outputs: unbinned contig/scaffold annotations
+	Parameters: --min_contig_size = 2499 (includes 2500 bp contigs/scaffolds)
+	
+24. Distill MAG annotations using DRAM 
+	Inputs: unbinned contig/scaffold annotations from Step 23
+	Outputs: distillate and liquor annotation files 
 
 ### End Workflow ###
 ----------------------
