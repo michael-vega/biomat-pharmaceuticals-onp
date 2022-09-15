@@ -2,79 +2,64 @@
 
 ### Additional details and steps are described in the manuscript and supporting information, as well as on The Wrighton Lab GitHub page: https://github.com/TheWrightonLab/
 
-### The majority of commands were performed using a Slurm job management system and commands are only generically described here 
-
-### Packages Used ###
-		#Sickle [v1.33]
-		#bbmap [v38.70]
-		#HTSeq [v0.12.4]
-		#EdgeR [v3.28.1]
-	
 ### Download filtered metatranscriptomic reads: NCBI and JGI Gold Accessions are available in Table S9 of the manuscript
 
-### Examples here use "FASTA.fastq.gz"; FASTA would be replaced throughout by the filename downloaded from NCBI or JGI
+### The majority of commands were performed using a Slurm job management system
+
+### All commands use default parameters if not specified
+
+### Packages / Softwares Used ###
+		#Sickle [v1.33]: https://github.com/najoshi/sickle
+		#bbmap [v38.70]: https://jgi.doe.gov/data-and-tools/software-tools/bbtools/bb-tools-user-guide/bbmap-guide/
+		#HTSeq [v0.12.4]: https://htseq.readthedocs.io/en/master/
+		#EdgeR [v3.28.1]: https://bioconductor.org/packages/release/bioc/html/edgeR.html
 
 -----------------------
 ### Begin Workflow ###
 
-### Unzip JGI filtered reads ###
+1. Unzip JGI filtered reads using gunzip
+	Inputs: zipped filtered reads files
+	Outputs: unzipped filtered reads files
 
-gunzip -c FASTA.fastq.gz > FASTA.fastq
+2. Deinterleave forward and reverse reads from the unzipped fastq file from Step 1 using deinterleave_fastq.sh
+	Inputs: filtered reads file from Step 1
+	Outputs: deinterleaved forward and reverse reads 
 
-### Deinterleave forward and reverse reads from the fastq file ###
+3. Trim the filtered reads from JGI using sickle. 
+	Inputs: forward and reverse reads from Step 2
+	Outputs: trimmed forward and reverse reads
+	Parameters: pe, -t = Sanger
 
-/ORG-Data/scripts/deinterleave_fastq.sh < FASTA_R1.fastq FASTA_R2.fastq
+4. Create reference from assembly for read mapping using bbmap
+	Inputs: MAG database (dereplicated medium and high quality only) from metagenomics workflow
+	Outputs: reference index from assembly 
 
-### Trim the filtered reads from JGI ###
+5. Map filtered and trimmed reads to MAG database using bbmap
+	Inputs: trimmed reads from Step 3, bbmap reference index from Step 4 
+	Outputs: sam files
+	Parameters: ambiguous = toss, usejni = t, length tag = t, idtag = t, idfilter = 0.99, printunmappedcount =t
 
-sickle pe -f FASTA_R1.fastq -r FASTA_R2.fastq -t sanger -o FASTA_R1_ALL_trimmed.fastq -p FASTA_R2_ALL_trimmed.fastq -s FASTA_R1R2_ALL_trimmed.fastq
+6. Convert sam files to bam files using 'samtools view'
+	Inputs: sam files from Step 5
+	Outputs: bam files
 
-### Map filtered and trimmed reads to MAG database with bbmap ###
+7. Sort bam files using 'samtools sort'
+	Inputs: bam files from Step 6
+	Outputs: sorted bam files
 
-#Create index from concatenated MAG fasta
+8. Count how many mapped metaT reads mapped to the concatenated MAG gene database (i.e., .gff files from DRAM) using HTSeq-count
+	Inputs: sorted bam file from Step 7, .gff files from DRAM annotation of MAGs (metagenomics workflow)
+	Outputs: counts text file 
 
-bbmap.sh ref=Concatenated_dRep_MAGs_MediumHighOnly.fa -Xmx100g threads=4 
+9. Filter counts using base R and edgeR
+	Inputs: counts text file from Step 8
+	Outputs: filtered counts matrix
+	Parameters: filter scaffolds with less than one raw count in at least three samples i.e., rowSums(cpm(counts_file_matrix)>1) >= 3
 
-#Map filtered and trimmed reads to MAG database index (written to disc in above command)
+10. Create DGElist object and normalize with TMM using edgeR
+	Inputs: filtered counts matrix from Step 9, sample metadata (i.e., coldata), grouping details
+	Outputs: TMM normalized filtered counts matrix 
+	Parameters: method = "TMM"
 
-bbmap.sh build=1 in=FASTA_R1_ALL_trimmed.fastq in2=FASTA_R2_ALL_trimmed.fastq  outm=filtered_99percentidentity_FASTA_vs_metaG_db.sam keepnames=t  ambiguous=toss usejni=t -Xmx200g threads=8 lengthtag=t idtag=t idfilter=0.99 printunmappedcount=t
-
-### Tabulate sequence counts with HTSeq-count ###
-
-#Use samtools to convert SAM file to BAM, then sort
-
-samtools view -@ 8 -bS $filtered_99percentidentity_FASTA_vs_metaG_db.sam > filtered_99percentidentity_FASTA_vs_metaG_db.bam  
-samtools sort -@ 8 -o filtered_99percentidentity_FASTA_vs_metaG_db.sorted.bam filtered_99percentidentity_FASTA_vs_metaG_db.bam
-
-#Count how many mapped metaT reads map to the concatenated MAG gene database (i.e., .gff files from DRAM)
-
-htseq-count -s no -f bam -t CDS -i ID -m union -r name filtered_99percentidentity_FASTA_vs_metaG_db.sorted.bam Concatenated_dRep_MediumHighOnly_MAGs_Genes_2500bp.gff > filtered_99percentidentity_FASTA_vs_metaG_db_ReadCounts.txt
-
-### Filter counts in R ###
-
-#Import HTSeq count data and sample metadata into R
-
-HTSeq_cts = read.csv("HTSeq_cts.csv")
-HTSeq_coldata = read.csv("HTSeq_coldata.csv")
-
-#Convert HTSeq count data to a matrix, then remove scaffolds with less than one raw count in at least three samples 
-
-edgeR_DGEList <- matrix.please(HTSeq_cts)
-keep <- rowSums(cpm(edgeR_DGEList)>1) >= 3
-edgeR_DGEList_filtered <- edgeR_DGEList[keep,]
-
-### Normalize counts as Trimmed Mean of Means (TMM) using EdgeR ###
-
-#Define groups to create DGElist object which connects HTSeq counts with sample metadata
-
-group <- c("AM_0.5","AM_0.5","AM_0.5","AM_1.5","AM_1.5","AM_1.5","AM_2.5","AM_2.5","AM_2.5","AM_Bottom","PM_0.5","PM_0.5","PM_0.5","PM_1.5","PM_1.5","PM_1.5","PM_2.5","PM_2.5","PM_2.5","PM_Bottom")
-DGElist = DGEList(counts=edgeR_DGEList_filtered,group=group,samples=HTSeq_coldata)
-
-#Calculate weighted trimmed mean of M (TMM) values, then normalize raw counts by TMM values
-
-DGElist_TMM <- calcNormFactors(DGElist, method = "TMM")
-DGElist_TMM_cpm <- cpm(DGElist_TMM)
-
-### End Workflow ### 
+### End Workflow ###
 -----------------------
-
