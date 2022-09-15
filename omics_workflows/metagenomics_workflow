@@ -41,22 +41,22 @@
 
 5. Pull out contigs/scaffolds less than 2500 sequences using pullseq
 	Inputs: assembled contigs/scaffolds from Step 4
-	Outputs: assembled contigs/scaffolds < 2500 bp
+	Outputs: assembled contigs/scaffolds > 2500 bp
 	Parameters: -m = 2500
 
 6. Parse prokaryotic scaffolds using EukRep
-	Inputs: assembled contigs/scaffolds < 2500 bp from Step 5
-	Outputs: eukaryotic vs prokaryotic assembled contigs/scaffolds < 2500 bp
+	Inputs: assembled contigs/scaffolds > 2500 bp from Step 5
+	Outputs: eukaryotic vs prokaryotic assembled contigs/scaffolds > 2500 bp
 	Parameters: --min == 2500
 	#Note: performed on all assemblies from all samples, including the 'bottom' subassembly 
 
 7. Build index file for binning using bowtie2-build 
-	Inputs: assembled contigs/scaffolds < 2500 bp from Step 5 OR prokaryotic assembled contigs/scaffolds < 2500 bp from Step 6
+	Inputs: assembled contigs/scaffolds > 2500 bp from Step 5 OR prokaryotic assembled contigs/scaffolds > 2500 bp from Step 6
 	Outputs: reference index
 	#Note: performed on all assemblies from all samples, including the 'bottom' subassembly and both prokaryotic EukRep parsed contigs/scaffolds but also raw assembled contigs/scaffolds
 
 8. Align index file against trimmed reads to create sam files using bowtie2
-	Inputs: assembled contigs/scaffolds < 2500 bp from Step 5 OR prokaryotic assembled contigs/scaffolds < 2500 bp from Step 6, reference index from Step 7
+	Inputs: assembled contigs/scaffolds > 2500 bp from Step 5 OR prokaryotic assembled contigs/scaffolds > 2500 bp from Step 6, reference index from Step 7
 	Outputs: sam files, mapped and unmapped paired contigs/scaffolds
 	Parameters: --fast
 
@@ -74,7 +74,7 @@
 	Parameters: --minContigDepth = 1, --minContigLength = 1000
 
 12. Bin contigs/scaffolds into MAGs using metabat2
-	Inputs: assembled contigs/scaffolds < 2500 bp from Step 5 OR prokaryotic assembled contigs/scaffolds < 2500 bp from Step 6, text file of coverage depth from Step 11
+	Inputs: assembled contigs/scaffolds > 2500 bp from Step 5 OR prokaryotic assembled contigs/scaffolds > 2500 bp from Step 6, text file of coverage depth from Step 11
 	Outputs: bins, binning statistics
 	Parameters:--verysensitive
 
@@ -125,11 +125,11 @@
 	Parameters: -m = 3, --min_coverage = 5, --min_percent_contig_coverage = 80, -u = F, -d = F, D = 10, -R = 2, -N = 1, -L = 22, -i = S,0,2.50 
 
 22. Pull assembled contigs/scaffolds not present in MAG database (i.e, 'unbinned') using pullseq
-	Inputs: concatenated fasta of all MAG contigs/scaffolds from Step 19, assembled contigs/scaffolds < 2500 bp from Step 5
-	Outputs: fasta of unbinned contigs/scaffolds < 2500 bp
+	Inputs: concatenated fasta of all MAG contigs/scaffolds from Step 19, assembled contigs/scaffolds > 2500 bp from Step 5
+	Outputs: fasta of unbinned contigs/scaffolds > 2500 bp
 
 23. Annotate unbinned contigs/scaffolds using DRAM
-	Inputs: fasta of unbinned contigs/scaffolds < 2500 bp from Step 22
+	Inputs: fasta of unbinned contigs/scaffolds > 2500 bp from Step 22
 	Outputs: unbinned contig/scaffold annotations
 	Parameters: --min_contig_size = 2499 (includes 2500 bp contigs/scaffolds)
 	
