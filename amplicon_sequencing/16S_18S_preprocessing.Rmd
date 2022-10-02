@@ -416,6 +416,9 @@ saveRDS(genus.species, file="PATH/RDS/genus.species.rds")
 *Below chunk run in Mac terminal* 
 Importing uniques.fasta into QIIME2, constructing a multiple sequence alignment, masking said alignment, then constructing and rooting a phylogenetic tree using fastree. 
 ```{r}
+#Activate QIIME2
+##source activate qiime2-2022.2
+
 #Importing unique ASV's into QIIME2
 ##qiime tools import --input-path uniques.fasta --type 'FeatureData[Sequence]' --output-path uniques.fasta.qza
 
@@ -586,6 +589,9 @@ saveRDS(Euk.taxa, "PATH/RDS/Euk.taxa.rds")
 *Below chunk run in Mac terminal* 
 Import Euk.uniques.fasta into QIIME2, construct a multiple sequence alignment, mask said alignment, then construct and root a phylogenetic tree using fastree. 
 ```{r}
+#Activate QIIME2
+##source activate qiime2-2022.2
+
 #Importing unique ASV's into QIIME2
 ##qiime tools import --input-path Euk.uniques.fasta --type 'FeatureData[Sequence]' --output-path Euk.uniques.fasta.qza
 
