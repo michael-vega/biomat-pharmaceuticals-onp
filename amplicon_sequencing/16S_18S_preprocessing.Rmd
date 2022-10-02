@@ -51,7 +51,7 @@ plotQualityProfile(fnRs[50])
 Creating subdirectories to place filtered/trimmed sequences into.
 ```{r}
 #Creating object containing sample names
-sample.names <- sapply(strsplit(basename(fnFs), "_R"), `[`, 1)
+sample.names <- sapply(strsplit(basename(fnFs), "_R1.fq"), `[`, 1)
 saveRDS(sample.names, file="PATH/RDS/sample.names.rds")
 
 #Creating subdirectory and amending names to denote filtering
