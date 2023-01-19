@@ -2,7 +2,7 @@
 
 ### Additional details and steps are described in the manuscript and supporting information, as well as on The Wrighton Lab GitHub page: https://github.com/TheWrightonLab/
 
-### Download filtered metatranscriptomic reads: NCBI and JGI Gold Accessions are available in Table S5 of the manuscript
+### Download filtered metagenomic reads: NCBI and JGI Gold Accessions are available in Table S5 of the manuscript
 
 ### The majority of commands were performed using a Slurm job management system
 
